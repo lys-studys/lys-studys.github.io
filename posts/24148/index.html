@@ -1,0 +1,248 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>string-1 | 陌上花开缓缓归</title><meta name="description" content="##匹配算法 一个长串和一个短串,求短串是否在长串中出现问题. 暴力匹配短串匹配长串中,需要短串从长串首位开始依次匹配,只要遇到不匹配的位置短串全部依次忘后移动一位(也就是短串的首部匹配长串的第二位)依次类推. 暴力匹配优化算法–KMP算法适用情况性质: 长串的指针不回溯.适用字符不断输入情况也能进行匹配,适合流式数据. 时间复杂度时间复杂度分析 设str1长度为n, str2的长度为m, Nex"><meta name="keywords" content="字符串系列 匹配算法合集"><meta name="author" content="lys-studys"><meta name="copyright" content="lys-studys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="shortcut icon" href="/img/timg.jpeg"><link rel="canonical" href="http://example.com/posts/24148/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="yandex-verification" content="{&quot;theme_color&quot;:{&quot;enable&quot;:true,&quot;main&quot;:&quot;#49B1F5&quot;,&quot;paginator&quot;:&quot;#00c4b6&quot;,&quot;button_hover&quot;:&quot;#FF7242&quot;,&quot;text_selection&quot;:&quot;#00c4b6&quot;,&quot;link_color&quot;:&quot;#99a9bf&quot;,&quot;meta_color&quot;:&quot;#858585&quot;,&quot;hr_color&quot;:&quot;#A4D8FA&quot;,&quot;code_foreground&quot;:&quot;#F47466&quot;,&quot;code_background&quot;:&quot;rgba(27, 31, 35, .05)&quot;,&quot;toc_color&quot;:&quot;#00c4b6&quot;,&quot;blockquote_padding_color&quot;:&quot;#49b1f5&quot;,&quot;blockquote_background_color&quot;:&quot;#49b1f5&quot;}}"/><meta property="og:type" content="article"><meta property="og:title" content="string-1"><meta property="og:url" content="http://example.com/posts/24148/"><meta property="og:site_name" content="陌上花开缓缓归"><meta property="og:description" content="##匹配算法 一个长串和一个短串,求短串是否在长串中出现问题. 暴力匹配短串匹配长串中,需要短串从长串首位开始依次匹配,只要遇到不匹配的位置短串全部依次忘后移动一位(也就是短串的首部匹配长串的第二位)依次类推. 暴力匹配优化算法–KMP算法适用情况性质: 长串的指针不回溯.适用字符不断输入情况也能进行匹配,适合流式数据. 时间复杂度时间复杂度分析 设str1长度为n, str2的长度为m, Nex"><meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><meta property="article:published_time" content="2020-10-02T14:24:25.000Z"><meta property="article:modified_time" content="2020-10-05T12:37:00.077Z"><meta name="twitter:card" content="summary"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.2.0',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime: 'days',
+  date_suffix: {"one_hour":"Just","hours":"hours ago","day":"days ago"},
+  copyright: {"limitCount":50,"languages":{"author":"Author: lys-studys","link":"Link: ","source":"Source: 陌上花开缓缓归","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  ClickShowText: {"text":"I,LOVE,YOU","fontSize":"15px"},
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"message_prev":"Press","message_next":"to bookmark this page"},"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+    },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isSidebar: true,
+  postUpdate: '2020-10-05 20:37:00'
+}</script><noscript><style type="text/css">
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+  }
+}
+
+var autoChangeMode = 'true'
+var t = saveToLocal.get('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (saveToLocal.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="./source/css/background.css"><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="陌上花开缓缓归" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">26</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">12</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">7</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> message</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="web_bg" data-type="photo"></div><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9A%B4%E5%8A%9B%E5%8C%B9%E9%85%8D"><span class="toc-number">1.</span> <span class="toc-text">暴力匹配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9A%B4%E5%8A%9B%E5%8C%B9%E9%85%8D%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95%E2%80%93KMP%E7%AE%97%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">暴力匹配优化算法–KMP算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E6%83%85%E5%86%B5"><span class="toc-number">2.1.</span> <span class="toc-text">适用情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="toc-number">2.2.</span> <span class="toc-text">时间复杂度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-number">2.3.</span> <span class="toc-text">基本思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.4.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96"><span class="toc-number">2.5.</span> <span class="toc-text">代码优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sunday%E7%AE%97%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">sunday算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">3.1.</span> <span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6-1"><span class="toc-number">3.2.</span> <span class="toc-text">时间复杂度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E6%9C%80%E5%A5%BD%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B"><span class="toc-number">3.2.1.</span> <span class="toc-text">在最好的情况下:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%9D%8F%E6%83%85%E5%86%B5%E4%B8%8B"><span class="toc-number">3.2.2.</span> <span class="toc-text">最坏情况下:</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3-1"><span class="toc-number">3.3.</span> <span class="toc-text">基本思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0-1"><span class="toc-number">3.4.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96-1"><span class="toc-number">3.5.</span> <span class="toc-text">代码优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SHIFT-AND%E7%AE%97%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">SHIFT_AND算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6-2"><span class="toc-number">4.1.</span> <span class="toc-text">时间复杂度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%80%9D%E8%B7%AF"><span class="toc-number">4.2.</span> <span class="toc-text">代码思路:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0-2"><span class="toc-number">4.3.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96-2"><span class="toc-number">4.4.</span> <span class="toc-text">代码优化</span></a></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">陌上花开缓缓归</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> message</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">string-1</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-10-02T14:24:25.000Z" title="Created 2020-10-02 22:24:25">2020-10-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2020-10-05T12:37:00.077Z" title="Updated 2020-10-05 20:37:00">2020-10-05</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>##匹配算法</p>
+<p>一个长串和一个短串,求短串是否在长串中出现问题.</p>
+<h2 id="暴力匹配"><a href="#暴力匹配" class="headerlink" title="暴力匹配"></a>暴力匹配</h2><p>短串匹配长串中,需要短串从长串首位开始依次匹配,只要遇到不匹配的位置短串全部依次忘后移动一位(也就是短串的首部匹配长串的第二位)依次类推.</p>
+<h2 id="暴力匹配优化算法–KMP算法"><a href="#暴力匹配优化算法–KMP算法" class="headerlink" title="暴力匹配优化算法–KMP算法"></a>暴力匹配优化算法–KMP算法</h2><h3 id="适用情况"><a href="#适用情况" class="headerlink" title="适用情况"></a>适用情况</h3><p>性质: 长串的指针不回溯.<br>适用字符不断输入情况也能进行匹配,适合流式数据.</p>
+<h3 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h3><p>时间复杂度分析</p>
+<p>设str1长度为n, str2的长度为m,</p>
+<p>Next数组的求取：为O(m)</p>
+<p>总的时间复杂度为：O(n)</p>
+<p>时间复杂度: O(m + n).</p>
+<h3 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h3><p>next数组: 储存的是与当前位置匹配的最长的字符串的末尾序号(位数) 从1开始的,next[0] 表示的是虚拟头结点值为-1</p>
+<p>前一部分;进行next[]数组的初始化.</p>
+<p>第二部分;进行算法的匹配,如果匹配失败了,比如i位置失配了则跳到next[i](i = next[i]). </p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p>初始化next数组部分</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int kmp(char *s, char *t) &#123;</span><br><span class="line">        int len1 &#x3D; strlen(s);</span><br><span class="line">        int len2 &#x3D; strlen(t);</span><br><span class="line">        int *next &#x3D; (int *)malloc(sizeof(int) * len2);</span><br><span class="line">        next[0] &#x3D; -1;</span><br><span class="line">        for (int i &#x3D; 1, j &#x3D; -1; i &lt; len2; i++) &#123;</span><br><span class="line">                while (j !&#x3D; -1 &amp;&amp; t[j + 1] !&#x3D; t[i]) j &#x3D; next[j];</span><br><span class="line">                if (t[j + 1] &#x3D;&#x3D; t[i]) j +&#x3D; 1;</span><br><span class="line">                next[i] &#x3D; j;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>应用匹配部分</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">        for (int i &#x3D; 0, j &#x3D; -1; s[i]; i++) &#123;</span><br><span class="line">                while (j !&#x3D; -1 &amp;&amp; t[j + 1] !&#x3D; s[i]) j &#x3D; next[j];</span><br><span class="line">                if (t[j + 1] &#x3D;&#x3D; s[i]) j +&#x3D; 1;</span><br><span class="line">                if (t[j + 1] &#x3D;&#x3D; 0) return i - len2 + 1;</span><br><span class="line">        &#125;</span><br><span class="line">        free(next);</span><br><span class="line">        return -1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="代码优化"><a href="#代码优化" class="headerlink" title="代码优化"></a>代码优化</h3><h2 id="sunday算法"><a href="#sunday算法" class="headerlink" title="sunday算法"></a>sunday算法</h2><h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h3><p>比如 word文档特定字符查找.</p>
+<h3 id="时间复杂度-1"><a href="#时间复杂度-1" class="headerlink" title="时间复杂度"></a>时间复杂度</h3><p>每次能跳过的位置有多少；二是在内部循环尝试匹配时，多快能确定是失配了还是完整匹配了。</p>
+<h4 id="在最好的情况下"><a href="#在最好的情况下" class="headerlink" title="在最好的情况下:"></a>在最好的情况下:</h4><p>每次失配，于是每次i都跳过n+1个位置；并且当在内部循环尝试匹配，总能在第一个字符位置就确定失配了，这样得到时间O(m/n)。</p>
+<h4 id="最坏情况下"><a href="#最坏情况下" class="headerlink" title="最坏情况下:"></a>最坏情况下:</h4><p>每次i都只能移动一位，且总是几乎要到短串(模式串)的末尾才发现失配了。时间复杂度是O(m*n)并不比Brut-force的解法好。</p>
+<h3 id="基本思想-1"><a href="#基本思想-1" class="headerlink" title="基本思想"></a>基本思想</h3><p>  算法的背景:就是给定一个母串(长串),一个模式串(短串),短串进行与长串匹配.<br>  匹配思想: 从首位与母串进行依次匹配时出现不匹配的情况,就从母串中寻找与模式串位数加一位的字符与模式串从后往前第一个相匹配的字符,然后与之对齐,相同位字符对齐带动了整个字符串的移动.如果没有找到与之匹配的字符,就整体后移模式串(短串)长度加一位,跳过母串中的不匹配位.<br>  涉及到一个偏移表:(重点)<br>  两种情况<br>  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">m−max&#123;i&lt;m|P[i]&#x3D;w&#125; if w is in P[0..m−1] </span><br><span class="line">m+1otherwise </span><br><span class="line">  </span><br></pre></td></tr></table></figure><br>  简单解释一下 </p>
+<ol>
+<li>m表示 模式串的长度 max(正向匹配最大数) 就是从模式串后往前最先找的那个匹配位置</li>
+<li>没找到就往后移动 m + 1 位.<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/q547550831/article/details/51860017">图形演示跳转</a> </li>
+</ol>
+<h3 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/q547550831/article/details/51860017">java 参考博客</a></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">t <span class="keyword">int</span> maxNum = <span class="number">1005</span>;</span><br><span class="line"><span class="keyword">int</span> shift[maxNum];</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Sunday</span><span class="params">(<span class="keyword">const</span> string&amp; T, <span class="keyword">const</span> string&amp; P)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = T.length();</span><br><span class="line">    <span class="keyword">int</span> m = P.length();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 默认值，移动m+1位</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; maxNum; i++) &#123;</span><br><span class="line">        shift[i] = m + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 模式串P中每个字母出现的最后的下标</span></span><br><span class="line">    <span class="comment">// 所对应的主串参与匹配的最末位字符的下一位字符移动到该位，所需要的移动位数</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m; i++) &#123;</span><br><span class="line">        shift[P[i]] = m - i;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 模式串开始位置在主串的哪里</span></span><br><span class="line">    <span class="keyword">int</span> s = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 模式串已经匹配到的位置</span></span><br><span class="line">    <span class="keyword">int</span> j;</span><br><span class="line">    <span class="keyword">while</span>(s &lt;= n - m) &#123;</span><br><span class="line">        j = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(T[s + j] == P[j]) &#123;</span><br><span class="line">            j++;</span><br><span class="line">            <span class="comment">// 匹配成功</span></span><br><span class="line">            <span class="keyword">if</span>(j &gt;= m) &#123;</span><br><span class="line">                <span class="keyword">return</span> s;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 找到主串中当前跟模式串匹配的最末字符的下一个字符</span></span><br><span class="line">        <span class="comment">// 在模式串中出现最后的位置</span></span><br><span class="line">        <span class="comment">// 所需要从(模式串末尾+1)移动到该位置的步数</span></span><br><span class="line">        s += shift[T[s + m]];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>c/c++</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int sunday(char *s, char *t) &#123;</span><br><span class="line">        int shift[128] &#x3D; &#123;0&#125;;</span><br><span class="line">        int len1 &#x3D; strlen(s);</span><br><span class="line">        int len2 &#x3D; strlen(t);</span><br><span class="line">       &#x2F;&#x2F; 代码结构定义位置</span><br><span class="line">        for (int i &#x3D; 0; i &lt; 128; i++) shift[i] &#x3D; len2 + 1;</span><br><span class="line">        for (int i &#x3D; 0; t[i]; i++) shift[t[i]] &#x3D; len2 - i;</span><br><span class="line">       &#x2F;&#x2F;代码初始化位置</span><br><span class="line">		len &#x3D; len1 - len2;</span><br><span class="line">        for (int i &#x3D; 0; i &lt;&#x3D; len;) &#123;</span><br><span class="line">                int flag &#x3D; 1;</span><br><span class="line">            for (int j &#x3D; 0; j &lt; len2; j++) &#123;</span><br><span class="line">                        if (t[j] &#x3D;&#x3D; s[i + j]) continue;</span><br><span class="line">                        i +&#x3D; shift[s[i + len2]];&#x2F;&#x2F;移动母串位置</span><br><span class="line">                        flag &#x3D; 0;</span><br><span class="line">                        break;   </span><br><span class="line">            &#125;</span><br><span class="line">            if (flag) return i;</span><br><span class="line">        &#125;</span><br><span class="line">        return -1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="代码优化-1"><a href="#代码优化-1" class="headerlink" title="代码优化"></a>代码优化</h3><p>为了提高在最坏情况下的算法效率，可以对模式串中的字符按照其出现的概率从小到大的顺序扫描，这样能尽早地确定失配与否。</p>
+<h2 id="SHIFT-AND算法"><a href="#SHIFT-AND算法" class="headerlink" title="SHIFT_AND算法"></a>SHIFT_AND算法</h2><p>注:手机打开 否则没有图 重点在图<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/silence401/article/details/77446537">参考博客</a></p>
+<h3 id="时间复杂度-2"><a href="#时间复杂度-2" class="headerlink" title="时间复杂度"></a>时间复杂度</h3><p> 根据代码分析 可得此算法的时间复杂度为O(n) 最高可提高机器字长位的速度。</p>
+<h3 id="代码思路"><a href="#代码思路" class="headerlink" title="代码思路:"></a>代码思路:</h3><p>重点! 即使模式串的前缀优势目标串的后缀<br>  Shift_And算法和KMP算法一样，是基于前缀来进行字符串匹配。但是它的算法思想要比KMP思路简单很多。它主要是维护了一个集合，该集合中保存的是所有既是模式串的前缀同时又是目标串的后缀的字符串。每次读入一个新的文本，本算法就利用位并行的方法更新该集合（神奇之处）。该集合用一个位掩码D进行表示：dm…d1表示（m表示的是模式串的大小）。</p>
+<p>代码条件:</p>
+<ol>
+<li>p = (p &lt;&lt; 1 | 1) &amp; d[s[i]]  条件为p中的二进制 (左移一位末尾变为1) &amp; ()</li>
+<li>p &amp; (1 &lt;&lt; (n - 1)) ? = 1    条件判断 最高位是否为1,判断是否匹配.(为什么最高位: 因为p中的二进制所在位数为一就说明当前为一的位数就是长的前缀和短串后缀比如 长串: cbcbcbaefd  短串: cbcba 刚读入c时d为00001 表示有一位c是长串的前缀短串的后缀)   </li>
+</ol>
+<h3 id="代码实现-2"><a href="#代码实现-2" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">int shift_and(char *s, char *t) &#123;</span><br><span class="line">        int code[128] &#x3D; &#123;0&#125;;</span><br><span class="line">        int len &#x3D; 0;</span><br><span class="line">        for (len &#x3D; 0; t[len]; len++) &#123;</span><br><span class="line">                code[t[len]] |&#x3D; (1 &lt;&lt; len);  &#x2F;&#x2F;短串信息的初始化转化为相对应的二进制 就比如以上例子中 c为 00101 由于字位掩码是bm...b1所有当前位二进制为原来符号的逆序.1对应的位上存在该符号对应的d[c] 即为什么样的二进制.</span><br><span class="line">        &#125;</span><br><span class="line">        int p &#x3D; 0;</span><br><span class="line">        for (int i &#x3D; 0; s[i]; i++) &#123;</span><br><span class="line">                p &#x3D; (p &lt;&lt; 1 | 1) &amp; code[s[i]]; &#x2F;&#x2F;进行的状态转换</span><br><span class="line">                if (p &amp; (1 &lt;&lt; (len - 1))) return i - len + 1; &#x2F;&#x2F;状态判断 </span><br><span class="line">        &#125;</span><br><span class="line">        return -1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="代码优化-2"><a href="#代码优化-2" class="headerlink" title="代码优化"></a>代码优化</h3><hr>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">lys-studys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/posts/24148/">http://example.com/posts/24148/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B3%BB%E5%88%97-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95%E5%90%88%E9%9B%86/">字符串系列 匹配算法合集</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/60133/"><img class="prev-cover" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">pratice</div></div></a></div><div class="next-post pull-right"><a href="/posts/14192/"><img class="next-cover" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">c++(1)</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By lys-studys</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">我们相遇不是意外~ <a target="_blank" rel="noopener" href="https://lys-studys.github.io//">blog</a>!</div><div class="icp"><a target="_blank" rel="noopener" href="http://www.beian.miit.gov.cn/state/outPortal/loginPortal.action"><img class="icp-icon" src="/img/icp.png"/><span>粵ICP備xxxx</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="chat_btn" type="button" title="rightside.chat_btn"><i class="fas fa-sms"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>var endLoading = function () {
+  document.body.style.overflow = 'auto';
+  document.getElementById('loading-box').classList.add("loaded")
+}
+window.addEventListener('load',endLoading)</script><div class="js-pjax"><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    $.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js', function () {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'default',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    window.valine = new Valine({
+      el: '#vcomment',
+      appId: 'K6YAjTUpfqvIIJRgat2mpicY-gzGzoHsz',
+      appKey: 'TiK1kxcHhW26MWKdEgTtxWlm',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    });
+    if ('nick,mail') { valine.config.requiredFields= 'nick,mail'.split(',') }
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><canvas class="fireworks"></canvas><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script defer="defer" id="ribbon" src="/js/third-party/canvas-ribbon.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="ribbon_piao" mobile="true" src="/js/third-party/piao.js"></script><script src="/js/third-party/activate-power-mode.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="/js/third-party/click_heart.js" async="async"></script><script src="/js/third-party/ClickShowText.js" async="async"></script><script>(function(d, w, c) {
+    w.ChatraID = '';
+    var s = d.createElement('script');
+    w[c] = w[c] || function() {
+        (w[c].q = w[c].q || []).push(arguments);
+    };
+    s.async = true;
+    s.src = 'https://call.chatra.io/chatra.js';
+    if (d.head) d.head.appendChild(s);
+})(document, window, 'Chatra');
+
+if (true) {
+  var chatBtnFn = () => {
+    var chatBtn = document.getElementById("chat_btn")
+    chatBtn.addEventListener("click", function(){
+      Chatra('openChat')
+    });
+  }
+  chatBtnFn()
+} else {
+  if (true) {
+    function chatBtnHide () {
+      Chatra('hide')
+    }
+    function chatBtnShow () {
+      Chatra('show')
+    }
+  }
+}</script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
