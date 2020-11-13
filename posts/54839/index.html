@@ -1,0 +1,287 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>algorithm | 陌上花开缓缓归</title><meta name="description" content="如何判断链表有环，求环的长度以及找到环的起始位置，简述算法过程leedcode 中happy number,不是用链表但是用的是一个思想. 如果现在有k个有序数组,如何合并成一个有序数组k路归并排序: 请具体说明，为什么归并排序适合处理大数据排序情况如果现在有40g的外部文件，而内存只有2g,如何进行文件的排序操作，这种情况就需要对40g的内存进行划分,划分成20份2g的文件，通过内存排序算法对这"><meta name="author" content="lys-studys"><meta name="copyright" content="lys-studys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="shortcut icon" href="/img/timg.jpeg"><link rel="canonical" href="http://example.com/posts/54839/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="yandex-verification" content="{&quot;theme_color&quot;:{&quot;enable&quot;:true,&quot;main&quot;:&quot;#49B1F5&quot;,&quot;paginator&quot;:&quot;#00c4b6&quot;,&quot;button_hover&quot;:&quot;#FF7242&quot;,&quot;text_selection&quot;:&quot;#00c4b6&quot;,&quot;link_color&quot;:&quot;#99a9bf&quot;,&quot;meta_color&quot;:&quot;#858585&quot;,&quot;hr_color&quot;:&quot;#A4D8FA&quot;,&quot;code_foreground&quot;:&quot;#F47466&quot;,&quot;code_background&quot;:&quot;rgba(27, 31, 35, .05)&quot;,&quot;toc_color&quot;:&quot;#00c4b6&quot;,&quot;blockquote_padding_color&quot;:&quot;#49b1f5&quot;,&quot;blockquote_background_color&quot;:&quot;#49b1f5&quot;}}"/><meta property="og:type" content="article"><meta property="og:title" content="algorithm"><meta property="og:url" content="http://example.com/posts/54839/"><meta property="og:site_name" content="陌上花开缓缓归"><meta property="og:description" content="如何判断链表有环，求环的长度以及找到环的起始位置，简述算法过程leedcode 中happy number,不是用链表但是用的是一个思想. 如果现在有k个有序数组,如何合并成一个有序数组k路归并排序: 请具体说明，为什么归并排序适合处理大数据排序情况如果现在有40g的外部文件，而内存只有2g,如何进行文件的排序操作，这种情况就需要对40g的内存进行划分,划分成20份2g的文件，通过内存排序算法对这"><meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><meta property="article:published_time" content="2020-11-08T11:59:08.000Z"><meta property="article:modified_time" content="2020-11-09T05:46:22.977Z"><meta name="twitter:card" content="summary"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.2.0',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime: 'days',
+  date_suffix: {"one_hour":"Just","hours":"hours ago","day":"days ago"},
+  copyright: {"limitCount":50,"languages":{"author":"Author: lys-studys","link":"Link: ","source":"Source: 陌上花开缓缓归","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  ClickShowText: {"text":"I,LOVE,YOU","fontSize":"15px"},
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"message_prev":"Press","message_next":"to bookmark this page"},"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+    },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isSidebar: true,
+  postUpdate: '2020-11-09 13:46:22'
+}</script><noscript><style type="text/css">
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+  }
+}
+
+var autoChangeMode = 'true'
+var t = saveToLocal.get('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (saveToLocal.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="./source/css/background.css"><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="陌上花开缓缓归" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">38</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">20</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">13</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> message</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="web_bg" data-type="photo"></div><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E6%9C%89%E7%8E%AF%EF%BC%8C%E6%B1%82%E7%8E%AF%E7%9A%84%E9%95%BF%E5%BA%A6%E4%BB%A5%E5%8F%8A%E6%89%BE%E5%88%B0%E7%8E%AF%E7%9A%84%E8%B5%B7%E5%A7%8B%E4%BD%8D%E7%BD%AE%EF%BC%8C%E7%AE%80%E8%BF%B0%E7%AE%97%E6%B3%95%E8%BF%87%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">如何判断链表有环，求环的长度以及找到环的起始位置，简述算法过程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number"></span> <span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E6%9E%9C%E7%8E%B0%E5%9C%A8%E6%9C%89k%E4%B8%AA%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84-%E5%A6%82%E4%BD%95%E5%90%88%E5%B9%B6%E6%88%90%E4%B8%80%E4%B8%AA%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84"><span class="toc-number">1.</span> <span class="toc-text">如果现在有k个有序数组,如何合并成一个有序数组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%B7%E5%85%B7%E4%BD%93%E8%AF%B4%E6%98%8E%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E9%80%82%E5%90%88%E5%A4%84%E7%90%86%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8E%92%E5%BA%8F%E6%83%85%E5%86%B5"><span class="toc-number">2.</span> <span class="toc-text">请具体说明，为什么归并排序适合处理大数据排序情况</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E7%9A%84%E8%BE%93%E5%87%BA%E6%97%A0%E5%BA%8F%E6%95%B0%E7%BB%84%E4%B8%AD%E5%89%8Dk%E5%A4%A7%E7%9A%84%E5%80%BC-%E8%AF%B7%E8%AF%B4%E6%98%8E%E4%BD%A0%E7%9A%84%E6%96%B9%E6%B3%95-%E5%B9%B6%E5%88%86%E6%9E%90%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%8E"><span class="toc-number">3.</span> <span class="toc-text">如何快速的输出无序数组中前k大的值,请说明你的方法,并分析时间复杂度．</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#-1"><span class="toc-number"></span> <span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%87%E8%AE%BE%E6%9C%89%E4%B8%80%E4%B8%AA%E4%B8%8D%E7%9F%A5%E9%81%93%E5%A4%9A%E9%95%BF%E7%9A%84%E6%95%B0%E5%AD%97%E5%BA%8F%E5%88%97%EF%BC%8C%E5%A6%82%E4%BD%95%E7%AD%89%E6%A6%82%E7%8E%87%E7%9A%84%E4%BB%8E%E9%87%8C%E9%9D%A2%E6%8A%BD%E5%8F%96100%E4%B8%AA%E5%80%BC"><span class="toc-number">1.</span> <span class="toc-text">假设有一个不知道多长的数字序列，如何等概率的从里面抽取100个值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A6%81%E6%B1%82%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0-%E8%BF%90%E8%A1%8C100%E6%AC%A1-%E9%9D%9E%E9%A1%BA%E5%BA%8F%E7%9A%84%E8%BE%93%E5%87%BA1%E2%80%93100%E5%86%85%E6%89%80%E6%9C%89%E6%95%B0%E5%AD%97%EF%BC%8C%E8%A6%81%E6%B1%82%EF%BC%8C%E4%B8%8D%E8%83%BD%E4%BD%BF%E7%94%A8%E6%95%B0%E7%BB%84%EF%BC%8E"><span class="toc-number">2.</span> <span class="toc-text">要求设计一个函数,运行100次,非顺序的输出1–100内所有数字，要求，不能使用数组．</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E8%BF%B0%E8%AF%AD%E8%A8%80%E7%9A%84%E9%9A%8F%E6%9C%BA%E5%87%BD%E6%95%B0%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">简述语言的随机函数原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E9%95%BF%E5%BA%A6%E4%B8%BAn%E7%9A%84%E6%95%B0%E7%BB%84-%E5%8F%AA%E6%9C%89%E4%B8%80%E4%B8%AA%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E4%BA%86%E4%B8%80%E6%AC%A1%EF%BC%8C%E5%85%B6%E4%B8%8E%E6%95%B0%E5%AD%97%E5%9D%87%E5%87%BA%E7%8E%B0%E4%BA%862%E6%AC%A1-%E8%AF%B7%E6%89%BE%E5%88%B0%E5%87%BA%E7%8E%B01%E6%AC%A1%E7%9A%84%E8%BF%99%E4%B8%AA%E6%95%B0%E5%AD%97"><span class="toc-number">4.</span> <span class="toc-text">一个长度为n的数组,只有一个数字出现了一次，其与数字均出现了2次,请找到出现1次的这个数字.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E9%95%BF%E5%BA%A6%E4%B8%BAn%E7%9A%84%E6%95%B0%E7%BB%84%EF%BC%8C%E5%85%B6%E4%B8%AD%E7%9A%84%E6%95%B0%E5%80%BC%E8%8C%83%E5%9B%B4%E6%98%AF1%E2%80%93n-%E5%B7%B2%E7%9F%A5%E5%8F%AA%E6%9C%89%E4%B8%80%E4%B8%AA%E6%95%B0%E5%87%BA%E7%8E%B0%E4%BA%862%E6%AC%A1%EF%BC%8C%E5%85%B6%E4%B8%8E%E6%95%B0%E5%AD%97%E9%83%BD%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%BA%86%E4%B8%80%E6%AC%A1%EF%BC%8C%E5%A6%82%E4%BD%95%E6%89%BE%E5%88%B0%E8%BF%99%E4%B8%AA%E5%87%BA%E7%8E%B0%E4%BA%862%E6%AC%A1%E7%9A%84%E6%95%B0%E5%AD%97%EF%BC%8C%E5%88%86%E6%9E%90%E4%BD%A0%E6%96%B9%E6%B3%95%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6-%E8%A6%81%E6%B1%82%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6O-n-%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6O-1"><span class="toc-number">5.</span> <span class="toc-text">一个长度为n的数组，其中的数值范围是1–n,已知只有一个数出现了2次，其与数字都只出现了一次，如何找到这个出现了2次的数字，分析你方法的时间复杂度.要求时间复杂度O(n),空间复杂度O(1).</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E9%95%BF%E5%BA%A6%E4%B8%BAn%E7%9A%84%E6%95%B0%E7%BB%84-%E5%B7%B2%E7%9F%A5%E5%8F%AA%E6%9C%89%E4%B8%80%E4%B8%AA%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E4%BA%862%E6%AC%A1%EF%BC%8C%E5%85%B6%E4%BD%99%E6%95%B0%E5%AD%97%E9%83%BD%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%BA%861%E6%AC%A1%EF%BC%8C%E5%A6%82%E4%BD%95%E6%89%BE%E5%88%B0%E8%BF%99%E4%B8%AA%E5%87%BA%E7%8E%B0%E4%BA%862%E6%AC%A1%E7%9A%84%E6%95%B0%E5%AD%97%EF%BC%8C%E5%88%86%E6%9E%90%E4%BD%A0%E6%96%B9%E6%B3%95%E7%9A%84%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%8E"><span class="toc-number">6.</span> <span class="toc-text">一个长度为n的数组,　已知只有一个数字出现了2次，其余数字都只出现了1次，如何找到这个出现了2次的数字，分析你方法的时间复杂度．</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B7%B2%E7%9F%A5%E5%9C%A8%E4%B8%80%E4%B8%AA%E6%9C%89n%E4%B8%AA%E6%95%B4%E6%95%B0%E7%9A%84%E6%95%B0%E7%BB%84%E4%B8%AD%EF%BC%8C%E6%95%B0%E9%87%8F%E6%9C%80%E5%A4%9A%E7%9A%84%E4%B8%80%E4%B8%AA%E6%95%B0%E5%AD%97%E8%B6%85%E8%BF%87%E4%BA%86-n-2-%E8%AF%B7%E8%AE%BE%E8%AE%A1%E7%AE%97%E6%B3%95%E6%89%BE%E5%88%B0%E8%BF%99%E4%B8%AA%E6%95%B0%E5%AD%97%EF%BC%8E"><span class="toc-number">7.</span> <span class="toc-text">已知在一个有n个整数的数组中，数量最多的一个数字超过了(n&#x2F;2),请设计算法找到这个数字．</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B7%B2%E7%9F%A5%E5%9C%A8%E4%B8%80%E4%B8%AA%E6%9C%89n%E4%B8%AA%E6%95%B4%E6%95%B0%E7%9A%84%E6%95%B0%E7%BB%84%E4%B8%AD%EF%BC%8C%E6%95%B0%E9%87%8F%E6%9C%80%E5%A4%9A%E7%9A%84%E4%B8%80%E4%B8%AA%E6%95%B0%E5%AD%97%E8%B6%85%E8%BF%87%E4%BA%86-n-k-%E8%AF%B7%E8%AE%BE%E8%AE%A1%E7%AE%97%E6%B3%95%E6%89%BE%E5%88%B0%E8%BF%99%E4%B8%AA%E6%95%B0%E5%AD%97%EF%BC%8E"><span class="toc-number">8.</span> <span class="toc-text">已知在一个有n个整数的数组中，数量最多的一个数字超过了(n&#x2F;k),请设计算法找到这个数字．</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E4%B8%80%E4%B8%AA%E6%95%B0%E7%BB%84%E4%B8%AD%EF%BC%8C%E5%A4%A7%E5%A4%9A%E6%95%B0%E6%95%B0%E5%AD%97%E9%83%BD%E5%87%BA%E7%8E%B03%E6%AC%A1-%E5%8F%AA%E6%9C%89%E4%B8%80%E4%B8%AA%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E4%B8%8D%E8%B6%B33%E6%AC%A1%EF%BC%8C%E8%AF%B7%E8%AE%BE%E8%AE%A1%E7%AE%97%E6%B3%95%E6%89%BE%E5%88%B0%E8%BF%99%E4%B8%AA%E6%95%B0%E5%AD%97%EF%BC%8E"><span class="toc-number">9.</span> <span class="toc-text">在一个数组中，大多数数字都出现3次,只有一个数字出现次数不足3次，请设计算法找到这个数字．</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E6%94%AF%E6%8C%81min%E6%93%8D%E4%BD%9C%E7%9A%84%E6%A0%88%EF%BC%8Cmin%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%BD%93%E5%89%8D%E6%A0%88%E4%B8%AD%E7%9A%84%E6%9C%80%E5%B0%8F%E5%80%BC-%E8%A6%81%E6%B1%82min-push-pop-%E6%93%8D%E4%BD%9C%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E9%83%BD%E6%98%AFO-1-%E5%87%BD%E6%95%B0%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1"><span class="toc-number">10.</span> <span class="toc-text">如何设计一个支持min操作的栈，min函数返回当前栈中的最小值,要求min,push,pop()操作时间复杂度都是O(1),函数如何设计.</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E4%B8%80%E4%B8%AA%E4%B8%8D%E5%8C%85%E5%90%AB%E9%87%8D%E5%A4%8D%E5%85%83%E7%B4%A0%E7%9A%84%E6%95%B0%E7%BB%84%EF%BC%8C%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E7%9A%84%E6%89%BE%E5%88%B0%E8%BF%9E%E7%BB%AD%E7%9A%84k%E4%B8%AA%E4%BD%8D%E7%BD%AE%EF%BC%8C%E4%BD%BF%E5%BE%97%E8%BF%99K%E4%B8%AA%E4%BD%8D%E7%BD%AE%E4%B8%8A%E9%9D%A2%E7%9A%84%E6%95%B0%E5%AD%97%E6%8E%92%E5%BA%8F%E4%BB%A5%E5%90%8E%E5%9C%A8%E6%95%B0%E5%80%BC%E4%B8%8A%E4%B9%9F%E6%98%AF%E8%BF%9E%E7%BB%AD%E7%9A%84%EF%BC%8E%E8%A6%81%E6%B1%82%E7%AE%97%E6%B3%95%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E4%B8%BAO-n"><span class="toc-number">11.</span> <span class="toc-text">有一个不包含重复元素的数组，如何快速的找到连续的k个位置，使得这K个位置上面的数字排序以后在数值上也是连续的．要求算法时间复杂度为O(n);</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%99%E5%AE%9Ak%E5%80%BC-%E5%A6%82%E6%9E%9C%E6%89%BE%E5%88%B0%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACk%E4%B8%AA%E5%85%83%E7%B4%A0-%E4%B8%80%E4%B8%AA%E6%8C%87%E9%92%88%E6%80%8E%E4%B9%88%E5%81%9A-%E4%B8%A4%E4%B8%AA%E6%8C%87%E9%92%88%E6%80%8E%E4%B9%88%E5%81%9A"><span class="toc-number">12.</span> <span class="toc-text">给定k值,如果找到链表的倒数第ｋ个元素,一个指针怎么做?两个指针怎么做?</span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">陌上花开缓缓归</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> message</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">algorithm</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-11-08T11:59:08.000Z" title="Created 2020-11-08 19:59:08">2020-11-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2020-11-09T05:46:22.977Z" title="Updated 2020-11-09 13:46:22">2020-11-09</time></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h4 id="如何判断链表有环，求环的长度以及找到环的起始位置，简述算法过程"><a href="#如何判断链表有环，求环的长度以及找到环的起始位置，简述算法过程" class="headerlink" title="如何判断链表有环，求环的长度以及找到环的起始位置，简述算法过程"></a>如何判断链表有环，求环的长度以及找到环的起始位置，简述算法过程</h4><p>leedcode 中happy number,不是用链表但是用的是一个思想.</p>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3><h4 id="如果现在有k个有序数组-如何合并成一个有序数组"><a href="#如果现在有k个有序数组-如何合并成一个有序数组" class="headerlink" title="如果现在有k个有序数组,如何合并成一个有序数组"></a>如果现在有k个有序数组,如何合并成一个有序数组</h4><p>k路归并排序:</p>
+<h4 id="请具体说明，为什么归并排序适合处理大数据排序情况"><a href="#请具体说明，为什么归并排序适合处理大数据排序情况" class="headerlink" title="请具体说明，为什么归并排序适合处理大数据排序情况"></a>请具体说明，为什么归并排序适合处理大数据排序情况</h4><p>如果现在有40g的外部文件，而内存只有2g,如何进行文件的排序操作，这种情况就需要对40g的内存进行划分,划分成20份2g的文件，通过内存排序算法对这20个文件进行排序，然后进行多路归并排序(外存排序算法).</p>
+<p>其中二路归并排序是多路归并排序中的一种.</p>
+<p>特点:　对内存要求很少而且大部分操作是在外存中进行的.</p>
+<h4 id="如何快速的输出无序数组中前k大的值-请说明你的方法-并分析时间复杂度．"><a href="#如何快速的输出无序数组中前k大的值-请说明你的方法-并分析时间复杂度．" class="headerlink" title="如何快速的输出无序数组中前k大的值,请说明你的方法,并分析时间复杂度．"></a>如何快速的输出无序数组中前k大的值,请说明你的方法,并分析时间复杂度．</h4><ol>
+<li>最差的方法: 选择排序(从未排序区选出最大或最小的元素进行插入已排序区尾部)，进而能选出第几大的值．</li>
+<li>维护一个大小为k的大根堆(nlogk)<br>把带插入元素依次性的插入大根堆．</li>
+<li>维护一个小根堆<br>参考堆排序和线性建堆法的过程<br>首先把数组用线性建堆法简历一个小根堆，建堆的时间复杂度O(n)<br>小根堆的时间复杂度是logn,弹出k次,所以总的时间复杂度为n + klogn;</li>
+<li>BFPRT算法<br>基于快速选择算法<br>快速选择算法的影响因素主要是，基准值的选取能否尽可能的平分数组元素．<br>一条性质找到第ｋ位的元素,左边的元素都比ｋ小．</li>
+</ol>
+<p>如果数据量比较大(n或者k比较大)(大数据情况)<br>参考多路归并排序的过程</p>
+<h3 id="-1"><a href="#-1" class="headerlink" title=""></a></h3><h4 id="假设有一个不知道多长的数字序列，如何等概率的从里面抽取100个值"><a href="#假设有一个不知道多长的数字序列，如何等概率的从里面抽取100个值" class="headerlink" title="假设有一个不知道多长的数字序列，如何等概率的从里面抽取100个值"></a>假设有一个不知道多长的数字序列，如何等概率的从里面抽取100个值</h4><ol>
+<li><p>蓄水池抽样<br>假设已经从n个元素中抽取了k个元素，概率为(k/n).<br>假设蓄水池中k个元素a1,a2,a3,….ak.<br>当a(n+1)个元素进来的时候，就会1到(n - 1)中随机一个数值，这个值如果小于等于k的时候，把a(n + 1)替换掉该位置．如果大于k的话,a(n + 1)这个值就不保留．</p>
+</li>
+<li><p>应用场景<br>如果是说大数据场景下的采样问题．大数据场景一般是确定数据大小的情况下．<br>而蓄水池抽样说的是一个为止大小的序列.<br>确切的说应用场景是数据流采样问题,<br>数据流采样问题: 一个请求发送给服务器VPN,然后服务器进行转发达到翻墙的目的.服务器想对所有数据进行等概率采样，</p>
+</li>
+</ol>
+<h4 id="要求设计一个函数-运行100次-非顺序的输出1–100内所有数字，要求，不能使用数组．"><a href="#要求设计一个函数-运行100次-非顺序的输出1–100内所有数字，要求，不能使用数组．" class="headerlink" title="要求设计一个函数,运行100次,非顺序的输出1–100内所有数字，要求，不能使用数组．"></a>要求设计一个函数,运行100次,非顺序的输出1–100内所有数字，要求，不能使用数组．</h4><ol>
+<li><p>使用链表:<br>一百个链表中存取100个数值，然后随机删除节点，来达到随机的目的.</p>
+</li>
+<li><p>线性同余法:<br> 用一个线性同余式进行不断地计算<br> 剩余系:就比如　(4^k) % 7 当ｋ取值1,2,3,4对应值为4,3,1,4出现了循环<br> 就表示该公式的剩余系为4,2,1.<br> 能满足条件的(3xk%101)</p>
+</li>
+<li><p>扩展知识: </p>
+</li>
+</ol>
+<p>要求设计一个函数,运行k次,非顺序的输出1–k内所有数字，要求，不能使用数组</p>
+<ol>
+<li>欧拉定理</li>
+<li>欧拉函数</li>
+</ol>
+<h4 id="简述语言的随机函数原理"><a href="#简述语言的随机函数原理" class="headerlink" title="简述语言的随机函数原理"></a>简述语言的随机函数原理</h4><ol>
+<li><p>c语言中的应用<br>第一步：srand 设置随机种子<br>第二部：rand获取随机种子</p>
+</li>
+<li><p>原理介绍</p>
+</li>
+</ol>
+<p>首先:真随机和伪随机的区别</p>
+<p>其次:线性同余法(计算机中使用的方法)</p>
+<p>最后:为什么设置随机种子<br>就是为了在随机序列上找到一个起始点，如果没有起始点的话，我们的程序就会在一个固定的地方运行，产生的随机数是一样的．<br>如果随机种子一样产生的值也是一样的，只能用时间这个一直在变的量，来进行设定．</p>
+<p>###
+ 　</p>
+<h4 id="一个长度为n的数组-只有一个数字出现了一次，其与数字均出现了2次-请找到出现1次的这个数字"><a href="#一个长度为n的数组-只有一个数字出现了一次，其与数字均出现了2次-请找到出现1次的这个数字" class="headerlink" title="一个长度为n的数组,只有一个数字出现了一次，其与数字均出现了2次,请找到出现1次的这个数字."></a>一个长度为n的数组,只有一个数字出现了一次，其与数字均出现了2次,请找到出现1次的这个数字.</h4><ol>
+<li>异或运算的性质<br>第一: 满足交换率<br>第二: 满足结合率<br>本质是统计相应二进制的奇偶性的</li>
+</ol>
+<ol start="2">
+<li>解题方法</li>
+</ol>
+<p>一次进行异或操作，相同数字异或为零，最后找到．</p>
+<ol start="3">
+<li>拓展问题</li>
+</ol>
+<p>有两个数字出现一次．</p>
+<h4 id="一个长度为n的数组，其中的数值范围是1–n-已知只有一个数出现了2次，其与数字都只出现了一次，如何找到这个出现了2次的数字，分析你方法的时间复杂度-要求时间复杂度O-n-空间复杂度O-1"><a href="#一个长度为n的数组，其中的数值范围是1–n-已知只有一个数出现了2次，其与数字都只出现了一次，如何找到这个出现了2次的数字，分析你方法的时间复杂度-要求时间复杂度O-n-空间复杂度O-1" class="headerlink" title="一个长度为n的数组，其中的数值范围是1–n,已知只有一个数出现了2次，其与数字都只出现了一次，如何找到这个出现了2次的数字，分析你方法的时间复杂度.要求时间复杂度O(n),空间复杂度O(1)."></a>一个长度为n的数组，其中的数值范围是1–n,已知只有一个数出现了2次，其与数字都只出现了一次，如何找到这个出现了2次的数字，分析你方法的时间复杂度.要求时间复杂度O(n),空间复杂度O(1).</h4><p>n的数组，和数值范围是1–n，就用数组下标来表示对应位数，如果下标为1值为5,就让第一位和第五位数进行对调，看看第一位是不是五，如果是就找到了，如果不是接着对调．</p>
+<h4 id="一个长度为n的数组-已知只有一个数字出现了2次，其余数字都只出现了1次，如何找到这个出现了2次的数字，分析你方法的时间复杂度．"><a href="#一个长度为n的数组-已知只有一个数字出现了2次，其余数字都只出现了1次，如何找到这个出现了2次的数字，分析你方法的时间复杂度．" class="headerlink" title="一个长度为n的数组,　已知只有一个数字出现了2次，其余数字都只出现了1次，如何找到这个出现了2次的数字，分析你方法的时间复杂度．"></a>一个长度为n的数组,　已知只有一个数字出现了2次，其余数字都只出现了1次，如何找到这个出现了2次的数字，分析你方法的时间复杂度．</h4><p>第一类方法: 排序方法</p>
+<ol>
+<li><p>基数排序(raddix_sort)<br>时间复杂度O(n),常数的空间复杂度但常数较大.</p>
+</li>
+<li><p>其余排序(快排,堆排)</p>
+</li>
+</ol>
+<p>空间复杂度O(nlogn)<br>空间复杂度O(1)</p>
+<p>第二类方法: 哈希表</p>
+<p>时间复杂度:O(n)<br>空间复杂度:O(n)</p>
+<p>方法比较:</p>
+<pre><code>具体场景分析：
+比如计算资源短缺，选时间复杂度小的，
+存储空间短缺，选空间复杂度小的.
+
+如果其中一个两个都优于另一个，直接舍去第二种．</code></pre>
+<p>###　</p>
+<h4 id="已知在一个有n个整数的数组中，数量最多的一个数字超过了-n-2-请设计算法找到这个数字．"><a href="#已知在一个有n个整数的数组中，数量最多的一个数字超过了-n-2-请设计算法找到这个数字．" class="headerlink" title="已知在一个有n个整数的数组中，数量最多的一个数字超过了(n/2),请设计算法找到这个数字．"></a>已知在一个有n个整数的数组中，数量最多的一个数字超过了(n/2),请设计算法找到这个数字．</h4><p>超过(n/2)的数称为关键元素.</p>
+<p>代码实现:<br>    随机取出一个数值，进行比对，等于加1,不等就减1.</p>
+<h4 id="已知在一个有n个整数的数组中，数量最多的一个数字超过了-n-k-请设计算法找到这个数字．"><a href="#已知在一个有n个整数的数组中，数量最多的一个数字超过了-n-k-请设计算法找到这个数字．" class="headerlink" title="已知在一个有n个整数的数组中，数量最多的一个数字超过了(n/k),请设计算法找到这个数字．"></a>已知在一个有n个整数的数组中，数量最多的一个数字超过了(n/k),请设计算法找到这个数字．</h4><p>摩尔投票法:<br>    记录k-1个数字，及次数.<br>    k个数字来的时候,如果与之前元素不同就说明找到了ｋ个元素，<br>    用一个集合，有相同数加1, </p>
+<p>代码实现:</p>
+<h4 id="在一个数组中，大多数数字都出现3次-只有一个数字出现次数不足3次，请设计算法找到这个数字．"><a href="#在一个数组中，大多数数字都出现3次-只有一个数字出现次数不足3次，请设计算法找到这个数字．" class="headerlink" title="在一个数组中，大多数数字都出现3次,只有一个数字出现次数不足3次，请设计算法找到这个数字．"></a>在一个数组中，大多数数字都出现3次,只有一个数字出现次数不足3次，请设计算法找到这个数字．</h4><ol>
+<li>二进制位统计法:<br> 统计每一个二进制列上的1出现的次数是不是三的倍数,如果是则都是，如果有就说明不是出现了三次.</li>
+</ol>
+<ol start="2">
+<li>状态转换表:<br> 本质和前边一样的，<br>重新梳理</li>
+</ol>
+<p>###</p>
+<h4 id="如何设计一个支持min操作的栈，min函数返回当前栈中的最小值-要求min-push-pop-操作时间复杂度都是O-1-函数如何设计"><a href="#如何设计一个支持min操作的栈，min函数返回当前栈中的最小值-要求min-push-pop-操作时间复杂度都是O-1-函数如何设计" class="headerlink" title="如何设计一个支持min操作的栈，min函数返回当前栈中的最小值,要求min,push,pop()操作时间复杂度都是O(1),函数如何设计."></a>如何设计一个支持min操作的栈，min函数返回当前栈中的最小值,要求min,push,pop()操作时间复杂度都是O(1),函数如何设计.</h4><h4 id="有一个不包含重复元素的数组，如何快速的找到连续的k个位置，使得这K个位置上面的数字排序以后在数值上也是连续的．要求算法时间复杂度为O-n"><a href="#有一个不包含重复元素的数组，如何快速的找到连续的k个位置，使得这K个位置上面的数字排序以后在数值上也是连续的．要求算法时间复杂度为O-n" class="headerlink" title="有一个不包含重复元素的数组，如何快速的找到连续的k个位置，使得这K个位置上面的数字排序以后在数值上也是连续的．要求算法时间复杂度为O(n);"></a>有一个不包含重复元素的数组，如何快速的找到连续的k个位置，使得这K个位置上面的数字排序以后在数值上也是连续的．要求算法时间复杂度为O(n);</h4><p>维护一个窗口为K的窗口,这K个序列用两个优先队列维护，一个维护最大MAX_N,一个维护最下MIN_N,MAX_N - MIN_N = k - 1 这样的条件.</p>
+<h4 id="给定k值-如果找到链表的倒数第k个元素-一个指针怎么做-两个指针怎么做"><a href="#给定k值-如果找到链表的倒数第k个元素-一个指针怎么做-两个指针怎么做" class="headerlink" title="给定k值,如果找到链表的倒数第ｋ个元素,一个指针怎么做?两个指针怎么做?"></a>给定k值,如果找到链表的倒数第ｋ个元素,一个指针怎么做?两个指针怎么做?</h4><p>第一种做法: 一个指针,跑两次</p>
+<p>一个指针先找到链表的长度，再算出该数在第几位．</p>
+<p>第二种做法: 两个指针,跑一次<br>让两个指针之间的距离控制在ｋ，两个指针一起往后走，当后边指针指向为空时，前指针就是倒数第k位的数.走的步数是一样的.</p>
+<hr>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">lys-studys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/posts/54839/">http://example.com/posts/54839/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/59942/"><img class="prev-cover" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">system</div></div></a></div><div class="next-post pull-right"><a href="/posts/15731/"><img class="next-cover" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">mysql2</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By lys-studys</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">我们相遇不是意外~ <a target="_blank" rel="noopener" href="https://lys-studys.github.io//">blog</a>!</div><div class="icp"><a target="_blank" rel="noopener" href="http://www.beian.miit.gov.cn/state/outPortal/loginPortal.action"><img class="icp-icon" src="/img/icp.png"/><span>粵ICP備xxxx</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="chat_btn" type="button" title="rightside.chat_btn"><i class="fas fa-sms"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>var endLoading = function () {
+  document.body.style.overflow = 'auto';
+  document.getElementById('loading-box').classList.add("loaded")
+}
+window.addEventListener('load',endLoading)</script><div class="js-pjax"><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    $.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js', function () {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'default',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    window.valine = new Valine({
+      el: '#vcomment',
+      appId: 'K6YAjTUpfqvIIJRgat2mpicY-gzGzoHsz',
+      appKey: 'TiK1kxcHhW26MWKdEgTtxWlm',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    });
+    if ('nick,mail') { valine.config.requiredFields= 'nick,mail'.split(',') }
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><canvas class="fireworks"></canvas><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script defer="defer" id="ribbon" src="/js/third-party/canvas-ribbon.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="ribbon_piao" mobile="true" src="/js/third-party/piao.js"></script><script src="/js/third-party/activate-power-mode.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="/js/third-party/click_heart.js" async="async"></script><script src="/js/third-party/ClickShowText.js" async="async"></script><script>(function(d, w, c) {
+    w.ChatraID = '';
+    var s = d.createElement('script');
+    w[c] = w[c] || function() {
+        (w[c].q = w[c].q || []).push(arguments);
+    };
+    s.async = true;
+    s.src = 'https://call.chatra.io/chatra.js';
+    if (d.head) d.head.appendChild(s);
+})(document, window, 'Chatra');
+
+if (true) {
+  var chatBtnFn = () => {
+    var chatBtn = document.getElementById("chat_btn")
+    chatBtn.addEventListener("click", function(){
+      Chatra('openChat')
+    });
+  }
+  chatBtnFn()
+} else {
+  if (true) {
+    function chatBtnHide () {
+      Chatra('hide')
+    }
+    function chatBtnShow () {
+      Chatra('show')
+    }
+  }
+}</script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
