@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-03-23T12:53:04.934Z</updated>
+  <updated>2021-03-24T11:18:22.502Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>支持亿级io底层基石epoll实战揭秘</title>
+    <link href="http://example.com/posts/36817/"/>
+    <id>http://example.com/posts/36817/</id>
+    <published>2021-03-24T06:19:34.000Z</published>
+    <updated>2021-03-24T11:18:22.502Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>绝大部分linux服务器，基本上会用到epoll.</p><h3 id="epoll是什么"><a href="#epoll是什么" class="headerlink" title="epoll是什么?"></a>epoll是什么?</h3><ol><li>io管理组件.</li><li>高性能.是select/poll的升级版本.</li><li>epoll用在什么地方?</li><li>和ntyco协程框架有什么关联?<h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4>只要客户端对服务器进行一次tcp连接，就会产生一次io,如果十万个客户端同时对服务端建立连接，服务端就会产生十万socket，没连接一次就会产生一个io,就会产生十万个io,这时候就需要有个东西来管理它(十万个io)，(比如我怎么知道他来了数据呢?)<br>例子: 比如收快递用的蜂巢，当小哥把快递放到蜂巢，蜂巢就是统一管理快递的组件，所以说每个快递就好比一个io,蜂巢对应的就是管理io的组件,当蜂巢收到一个快递的时候，蜂巢就会通知用户来取这个快递，io的管理跟这个功能相似（io管理用来存fd的）.io多路复用，说明不只是你一个io，而是管理多个io.</li></ol><h4 id="epoll的产生-解决什么问题"><a href="#epoll的产生-解决什么问题" class="headerlink" title="epoll的产生(解决什么问题)"></a>epoll的产生(解决什么问题)</h4><p>如果没有多线程没有io管理，我们如何做一个服务器????</p><p>最初采用信号: 数据到达通过发送一个信号通知我们(这个信号-＞sigio现在还在沿用).性能极低，一两个客户端是没有问题的，一般用udp(因为udp以一个服务器为主)。</p><p>后来产生了线程:(几百个几千个服务端也是可用的，写代码非常简单)<br>    如果有线程没有io管理的情况该怎么做????<br>    一请求一线程: 当每一个accept来的时候(accept出现返回值的时候)就创建一个线程.当客户端退出的时候，这个线程也随之关闭，非常简单。每个线程读一个(是同步的).</p><p>有没有一些web服务器在用呢??<br>Apache服务器在用一请求一线程这种方式.</p><p>这种方式的弊端在哪里???<br>注定做不了很大的用户量，一个线程占用8MB的内存。吃内存.所以是不行的.</p><p>还有一种方式类似，是一请求一进程的方式:(叫做CGI)随着用户量多起来，并不好管理.</p><p>后续出现了select(io统一的管理)<br>select(maxfd. rset, wset, eset, timeout);</p><ol><li>maxfd表示最大的fd比如1,2,3,4,5 表示5, 比如2, 3, 4, 5, 6表示6.</li><li>rset是否可读</li><li>wset是否可写</li><li>eset是否有错误</li><li>timeout多长时间轮循一次.(多长时间检查一次)</li></ol><p>poll跟select类似。</p><p>现在来到了epoll跟蜂巢的概念一模一样的，</p><p>epoll真的能支持亿级并发吗?<br>epoll_creat(EPOLL_SIZE); EPOLL_SIZE只有零和一的区别，写10000也是和一同样的功能.<br>为零，表示什么用都没，不为零就能正常创建epoll.</p><p>epoll_wait(epoll_fd, events, EPOLL_SIZE, -1);<br>相当于蜂巢工作人员收快递，events相当于那个袋子,多长时间去一次，-1不是毫秒也不是啥，就不是一个准确的时间，表示有io才去取，没有io就一直阻塞.等于零表示一直没有，没有就直接过，如果大于零，随便一个数表示等待send.</p><p>水平触发和边沿触发问题????谁在什么时候触发????</p><p>触发: 是由tcp协议栈触发的,</p><ol><li>一次性触发。</li><li>一个事件没处理完一直触发.</li><li>对应的是水平触发: </li><li>对应的是边沿触发:<br>这里和长连接和短连接没有什么关系.</li></ol><p>问题: accept发生在epoll_wait之后吗?</p><p>当epoll_wait阻塞在一个地方的时候，如何解除阻塞的呢?<br>通过回调函数，协议栈通过epoll这个模块，通过调用回调函数来解除epoll_wait,这里tcp通过回调，这个回调叫做colback，回调到哪里呢?回调到epoll里边，来解除epoll_wait的阻塞状态.<br>所以上边的问题，是对的，只有epoll_wait被触发之后，才能进行数据的收取.这样才能判断fd是listen的还是我们程序本身的.</p><p>以下四种对epoll的做法都是不一样的，所以对应的方式也是不一样的.</p><ol><li>单线程可不可以做epoll? -&gt; redis.</li><li>多线程可不可以做epoll? -&gt; nattyserver(服务器的框架).</li><li>多核做epoll? -&gt; ntyco</li><li>多进程做epoll? -&gt; nginx</li></ol><p>redis单线程为何这么快?<br>redis:<br>    1. 纯内存的操作.(没有那些io,本身就很快).<F5><br>    2. 单线程是说的一个线程里边才有epoll,别的线程没有，也就是说没有线程之间的切换，加锁等操作.</p><hr>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>c++函数对象-sort排序规则</title>
@@ -436,30 +456,6 @@
     <updated>2020-12-08T02:59:15.576Z</updated>
     
     <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>DFS:深度优先搜索<br>一般问题描述,求所有边中最小的最大的问题.<br>步骤:<br>    1. 判断递归边界<br>    2. 选择递归进入的条件<br>    3. 递归之后的操作<br>    4. 返回上一步的返回值选取</p><p>面试题 04.04. 检查平衡性</p><p>/**</p><ul><li>Definition for a binary tree node.</li><li>struct TreeNode {<ul><li><pre><code>int val;</code></pre></li><li><pre><code>TreeNode *left;</code></pre></li><li><pre><code>TreeNode *right;</code></pre></li><li><pre><code>TreeNode(int x) : val(x), left(NULL), right(NULL) &#123;&#125;</code></pre></li><li>};<br><em>/<br>class Solution {<br>public:<br>  bool flag = true;<br>int search_tree_bfs(TreeNode</em> root){<pre><code>      //边界      if(root == NULL || !flag) return 0;      //递归条件      int left_size = search_tree_bfs(root-&gt;left) + 1;      int right_size = search_tree_bfs(root-&gt;right) + 1;      //当前操作</code></pre>  if(abs(left_size - right_size) &gt; 1){<pre><code>              flag = false;      </code></pre>  }  <pre><code>      //条件返回      return max(left_size, right_size); </code></pre>}<br>bool isBalanced(TreeNode* root) {<pre><code>      search_tree_bfs(root);      return flag;</code></pre>}<br>};</li></ul></li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
-    <category term="leedcode" scheme="http://example.com/categories/leedcode/"/>
-    
-    
-    <category term="leedcode" scheme="http://example.com/tags/leedcode/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>leedcode_回溯</title>
-    <link href="http://example.com/posts/21322/"/>
-    <id>http://example.com/posts/21322/</id>
-    <published>2020-12-01T06:43:49.000Z</published>
-    <updated>2020-12-08T02:58:56.016Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>n&amp;(n-1)的用途<br>近做LeetCode上面的题目，发现很多题目都用到了n&amp;(n-1)。感觉真是神通广大，下面就目前所看到的一些用途总结一下:</p><ol><li>求一个int类型数是否为2的幂</li></ol><p>当n=4时，二进制为：0100</p><p>n-1=3，二进制为：0011</p><p>则：n&amp;(n-1)==0</p><p>当n=8时，为1000</p><p>n-1=7，为0111</p><p>则n&amp;(n-1)==0</p><p>再举个反例：当n=5，为0101</p><p>n-1为0100</p><p>则n&amp;(n-1)=0100=4!=0</p><p>从上面我们可以看出，凡是2的幂，均是二进制数的某一高位为1，且仅此高位为1，比如4，0100；8，1000。那么它的n-1就变成了1所处的高位变成0，剩余低位变成1，如4-1,0011,8-1,0111，那么n&amp;(n-1)必为0</p><p>也就是n&amp;(n-1)==0</p><p>2,一个数的二进制中有多少位为1</p><p>while（n&gt;0）{</p><p>count++;</p><p>n = n&amp;(n-1);</p><p>}</p><p>这个原理有点类似于2的幂，大家可以自己动手试试，文字的解释永远无法战胜自己的亲身实践</p><p>3，一个数是否为4的幂</p><p>一个数是4的幂，那么必然是2的幂，反之，则不然</p><p>那么首先确定条件n&amp;（n-1）==0，确定出该数是否为2的幂，这就找到了一项必要条件</p><p>刚才说了一个数是2的幂却不一定是4的幂，比如2,8,32等这些都是2的级数次方</p><p>但是，我们可以发现，2的偶数次方，比如2^0=1,2^2=4,2^4=16,这些数减去1，都能被3整除，而2的奇数次方的数减去1之后无法被3整除，不信可以试试</p><p>这样的话，我们就可以很容易找到4的幂的充要条件，即 n&gt;0 &amp;&amp; ((n&amp;(n-1))==0) &amp;&amp; ((n-1)%3==0)</p><p>4,接下来还有一些可以用到符号&amp;运算的例子，比如求一个数32位二进制的倒序</p><p>int result =0；</p><p>for（int i=0；i&lt;32；i++）{</p><pre><code>   result&lt;&lt;=1;//result先左移一位，低位补0   result = result+(n&amp;1)； n&gt;&gt;=1;//n右移一位，高位补0</code></pre><p>}</p><p>5，将一个数表示为16进制,并返回相应字符串</p><p>if(n==0) return “0”;</p><p>String  result =””；</p><p>String[] map={“0”，”1”，”2”，”3”，”4”，”5”，”6”，”7”，”8”，”9”，”a”，”b”，”c”，”d”，”e”，”f”};</p><p>while（n!=0）{</p><p>result = map[n&amp;15]+result;</p><p>n&gt;&gt;=4;</p><p>}</p><p>回溯简单</p><ol><li><ol start="401"><li><p>二进制手表(注意,一个不该犯的错误,就是函数内部不可定义函数!)<br>class Solution {<br>public:<br>int count1(int n){<br>int num1 = 0;<br>while(n){</p><pre><code>num1++;n &amp;= (n - 1);&#125;return num1;</code></pre><p>}<br>vector<string> readBinaryWatch(int num) {<br>vector<string> res;</p><pre><code>for(int i = 0; i &lt; 12; i++)&#123;    for(int j = 0; j &lt; 60; j++)&#123;        if(count1(i) + count1(j) == num)&#123;            res.push_back(to_string(i)+&quot;:&quot;+ (j &lt; 10 ? &quot;0&quot; + to_string(j) : to_string(j)));        &#125;    &#125;&#125;return res;</code></pre><p>}<br>};</p></li></ol></li></ol><hr>]]></content>
     
     
       
