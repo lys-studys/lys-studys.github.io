@@ -1,0 +1,329 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>动态规划入门 | 陌上花开缓缓归</title><meta name="description" content="线性结构的特点是什么？非线性结构的特点是什么?:  线性结构元素之间的关系是一对一的，在线性结构中只有一个开始结点和一个终端结点，其他的每一个结点有且仅有一个前驱和一个后继结点。而非线性结构则没有这个特点，元素之间的关系可以是一对多的或多对多的。 基本思想:    1. 状态:        1. 最优子结构        2. 无后效性    2. 转移方程:        1. 分类讨论"><meta name="keywords" content="动态规划"><meta name="author" content="lys-studys"><meta name="copyright" content="lys-studys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="shortcut icon" href="/img/timg.jpeg"><link rel="canonical" href="http://example.com/posts/10547/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="yandex-verification" content="{&quot;theme_color&quot;:{&quot;enable&quot;:true,&quot;main&quot;:&quot;#49B1F5&quot;,&quot;paginator&quot;:&quot;#00c4b6&quot;,&quot;button_hover&quot;:&quot;#FF7242&quot;,&quot;text_selection&quot;:&quot;#00c4b6&quot;,&quot;link_color&quot;:&quot;#99a9bf&quot;,&quot;meta_color&quot;:&quot;#858585&quot;,&quot;hr_color&quot;:&quot;#A4D8FA&quot;,&quot;code_foreground&quot;:&quot;#F47466&quot;,&quot;code_background&quot;:&quot;rgba(27, 31, 35, .05)&quot;,&quot;toc_color&quot;:&quot;#00c4b6&quot;,&quot;blockquote_padding_color&quot;:&quot;#49b1f5&quot;,&quot;blockquote_background_color&quot;:&quot;#49b1f5&quot;}}"/><meta property="og:type" content="article"><meta property="og:title" content="动态规划入门"><meta property="og:url" content="http://example.com/posts/10547/"><meta property="og:site_name" content="陌上花开缓缓归"><meta property="og:description" content="线性结构的特点是什么？非线性结构的特点是什么?:  线性结构元素之间的关系是一对一的，在线性结构中只有一个开始结点和一个终端结点，其他的每一个结点有且仅有一个前驱和一个后继结点。而非线性结构则没有这个特点，元素之间的关系可以是一对多的或多对多的。 基本思想:    1. 状态:        1. 最优子结构        2. 无后效性    2. 转移方程:        1. 分类讨论"><meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><meta property="article:published_time" content="2021-04-07T03:47:55.000Z"><meta property="article:modified_time" content="2021-04-08T03:22:17.914Z"><meta name="twitter:card" content="summary"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.2.0',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime: 'days',
+  date_suffix: {"one_hour":"Just","hours":"hours ago","day":"days ago"},
+  copyright: {"limitCount":50,"languages":{"author":"Author: lys-studys","link":"Link: ","source":"Source: 陌上花开缓缓归","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  ClickShowText: {"text":"I,LOVE,YOU","fontSize":"15px"},
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"message_prev":"Press","message_next":"to bookmark this page"},"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+    },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isSidebar: true,
+  postUpdate: '2021-04-08 11:22:17'
+}</script><noscript><style type="text/css">
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+  }
+}
+
+var autoChangeMode = 'true'
+var t = saveToLocal.get('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (saveToLocal.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="./source/css/background.css"><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="陌上花开缓缓归" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">65</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">28</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">24</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> message</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="web_bg" data-type="photo"></div><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="toc-number">1.</span> <span class="toc-text">动态规划解题思路</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%80%E4%BC%98%E5%AD%90%E7%BB%93%E6%9E%84"><span class="toc-number">1.1.</span> <span class="toc-text">最优子结构</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%97%A0%E5%90%8E%E6%95%88%E6%80%A7"><span class="toc-number">1.2.</span> <span class="toc-text">无后效性</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E6%80%A7DP%E6%A6%82%E8%BF%B0"><span class="toc-number">2.</span> <span class="toc-text">线性DP概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">基础模型</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97-LIS"><span class="toc-number">3.1.</span> <span class="toc-text">最长上升子序列(LIS)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97-LCS"><span class="toc-number">3.2.</span> <span class="toc-text">最长公共子序列(LCS)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97-LCIS"><span class="toc-number">3.3.</span> <span class="toc-text">最长公共上升子序列(LCIS)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B0%E5%AD%97%E4%B8%89%E8%A7%92%E5%BD%A2"><span class="toc-number">3.4.</span> <span class="toc-text">数字三角形</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#DP%E6%80%9D%E8%B7%AF%E5%9C%A8%E6%B7%B1%E5%85%A5%E6%80%BB%E7%BB%93"><span class="toc-number">3.5.</span> <span class="toc-text">DP思路在深入总结!!!!</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BA%BF%E6%80%A7DP%E7%89%B9%E7%82%B9%E5%9B%9E%E9%A1%BE"><span class="toc-number">3.6.</span> <span class="toc-text">线性DP特点回顾</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%83%8C%E5%8C%85-%E7%AC%AC%E5%9B%9B%E7%A7%8DDP%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.7.</span> <span class="toc-text">背包(第四种DP模型)</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#01%E8%83%8C%E5%8C%85-%E6%BB%9A%E5%8A%A8%E6%95%B0%E7%BB%84"><span class="toc-number">3.7.1.</span> <span class="toc-text">01背包(滚动数组)</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%8B%86%E5%88%86"><span class="toc-number">3.7.2.</span> <span class="toc-text">完全背包(二进制拆分)</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%A4%9A%E9%87%8D%E8%83%8C%E5%8C%85"><span class="toc-number">3.7.3.</span> <span class="toc-text">多重背包</span></a></li></ol></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">陌上花开缓缓归</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> message</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">动态规划入门</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-04-07T03:47:55.000Z" title="Created 2021-04-07 11:47:55">2021-04-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-04-08T03:22:17.914Z" title="Updated 2021-04-08 11:22:17">2021-04-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>线性结构的特点是什么？非线性结构的特点是什么?: </p>
+<p>线性结构元素之间的关系是一对一的，在线性结构中只有一个开始结点和一个终端结点，其他的每一个结点有且仅有一个前驱和一个后继结点。而非线性结构则没有这个特点，元素之间的关系可以是一对多的或多对多的。</p>
+<p>基本思想:<br>    1. 状态:<br>        1. 最优子结构<br>        2. 无后效性<br>    2. 转移方程:<br>        1. 分类讨论<br>        2. 细心枚举</p>
+<h4 id="动态规划解题思路"><a href="#动态规划解题思路" class="headerlink" title="动态规划解题思路"></a>动态规划解题思路</h4><p>动态规划主要分为两个核心部分，一是确定DP状态，二是确定DP方程.</p>
+<p>DP状态两大原则:<br>    1. 最优子结构<br>    2. 无后效性</p>
+<h5 id="最优子结构"><a href="#最优子结构" class="headerlink" title="最优子结构"></a>最优子结构</h5><p>什么是最优子结构？<br>  将原有问题划分为一个个子问题，即为子结构。而对于每一个子问题，即为子结构。而对每一个子问题，其最优值均由【更小规模的子问题的最优值】推导而来，即为最优子结构.<br>  因此DP状态设置之前，需要将原有问题划分成一个个子问题，且需要确保子问题的最优值由【更小规模子问题的最优值】推出，此时子问题的最优值即为【DP状态】的定义.</p>
+<h5 id="无后效性"><a href="#无后效性" class="headerlink" title="无后效性"></a>无后效性</h5><p>就是我们只关心子问题的最优值，不关心子问题的最优值是怎么得到的.<br>简明来说就是，就是我们不关心当前子问题是哪一个子问题得来的，（多做题慢慢体会就会发现，就是不用记录哪个问题得来的，能得出来就可.</p>
+<p>最后概括一下:<br>    最优子结构就是DP状态最优值由更小规模的DP状态最优值推出，此处DP状态即为子问题，而无后效性就是无论DP状态是如何得到的，都不会影响后续DP状态的取值.</p>
+<h4 id="线性DP概述"><a href="#线性DP概述" class="headerlink" title="线性DP概述"></a>线性DP概述</h4><p>DP总而言之将原问题划分成多个子问题，且大规模子问题的最优解只与小规模子问题的最优解有关，与小规模子问题最优解是如何得到的无关，最后我们发现，首先弄一个结构存储最优解，如何得到的是我们需要实现的使我们要思考的这个就是DP的精髓所在。（也就是问题变换的精髓）。</p>
+<h4 id="基础模型"><a href="#基础模型" class="headerlink" title="基础模型"></a>基础模型</h4><h5 id="最长上升子序列-LIS"><a href="#最长上升子序列-LIS" class="headerlink" title="最长上升子序列(LIS)"></a>最长上升子序列(LIS)</h5><p>子序列:<br>    1. 可以不连续<br>    2. 相对位置不变</p>
+<p>模型讲解:<br>    求一个无序数组的最长上升子序列，如果是第一次见到这样的问题，那肯定没有什么思路，这个时候采取惯用的思路—-减少长度(从局部到全部),从小规模的问题着手思考.</p>
+<p>如果长度为１呢???? 答案显然为1.</p>
+<p>如果长度为2呢???? 这时需要考虑第二个数是否比第一个数大，如果比第一个数大，则答案为2,否则为1.</p>
+<p>如果长度为3呢????<br>那么我们需要枚举第三个数是否比第二个数或者第一个数大，如果比它大，则可以直接从第二个或第一个数的答案直接转移而来。因此我们可以如下订制【DP状态】,f{i}仅考虑前i个数，以第i个数为结尾的最长上升子序列的最大长度.</p>
+<p>由此推导出转移方程: 如何得到的使我们需要考虑的，状态不要涉及.<br>    f｛i｝= max(1, f{j} + 1); a{j} ＜ a{i}, j ＜i.</p>
+<p>模型分析:<br>    该模型【DP状态】的关键在于固定了最后一个数字，而这样做的原因在于对一个最长上升序列，我们只需要注意它最后一个数字，对于其前面的数字我们并不关心。<br>    该模型的时间复杂度为O(n^2), 其中n为数组的长度，另外该模型可用二分优化到O(nlogn).自行了解.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int lengthOfLIS(vector&lt;int&gt;&amp; nums)&#123;</span><br><span class="line">    int sz &#x3D; nums.size(), ans &#x3D; 0;</span><br><span class="line">    vector&lt;int&gt; f(sz, 0);</span><br><span class="line">    for(int i &#x3D; 0; i &lt; sz; i++)&#123;</span><br><span class="line">        int temp &#x3D; 1;</span><br><span class="line">        for(int j &#x3D; i - 1; j &gt;&#x3D; 0; j--)&#123;</span><br><span class="line">            if(nums[i] &gt; nums[j])</span><br><span class="line">            temp &#x3D; max(temp, f[j] + 1);</span><br><span class="line">        &#125;</span><br><span class="line">        f[i] &#x3D; temp;</span><br><span class="line">        ans &#x3D; max(ans, temp);</span><br><span class="line">    &#125;</span><br><span class="line">    return ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="最长公共子序列-LCS"><a href="#最长公共子序列-LCS" class="headerlink" title="最长公共子序列(LCS)"></a>最长公共子序列(LCS)</h5><p>给定两个字符串text1和text2,返回和两个字符串的最长公共子序列的长度。</p>
+<p>一个字符串的【子序列】是指这样一个新的字符串:<br>    他是由原字符串在不改变字符的相对顺序的情况下删除某个字符串(也可以不删除任何字符)后组成的新字符串。</p>
+<p>例如, ace是abcde的子序列, aec不是abcde的子序列。两个字符串的【公共子序列】是这两个字符串所共同拥有的子序列。　若这两个字符串没有公共子序列，则返回0;</p>
+<p>与LIS模型不同的是，最长公共子序列涉及到了两个字符数组，不再是基于单数组的问题。</p>
+<p>根据LIS模型【DP状态】设置的经验，以及【线性DP】的核心特点，即DP状态沿着各个维度线性增长，我们可以如下制定【DP状态】，f[i][j]表示第一个串的前i个字符与第二个字符的前j个字符的最长公共子序列的长度.</p>
+<p>该状态的转移方程没有上一个模型那么直接，因此我们需要分类讨论.</p>
+<ol>
+<li><p>假如text[i] != text[j], 即text1[i]无法与text2[j]匹配，因此f[i][j] = max(f[i][j - 1], f[i - 1][j]);</p>
+</li>
+<li><p>text1[i] == text2[j], 则text1[i]可以和text2[j]完成匹配，因此我们可以增加一种转移方式，f[i][j] = d[i - 1][j - 1] + 1.</p>
+</li>
+</ol>
+<p>时间复杂度O(nm),n m 分别是text1,text2串的长度.</p>
+<pre><code>             1. f[i - 1][j]</code></pre>
+<p>方程: f[i][j] =  2. f[i][j - 1]<br>                 3. d[i - 1][j - 1] + 1, text1[i] = text2[j];</p>
+<p>代码实现:<br>    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int longestCommand(text1, text2)&#123;</span><br><span class="line">    int n &#x3D; text1.size(), m &#x3D; text2().size();</span><br><span class="line">    vector&lt;vector&lt;int&gt;&gt;f(n + 1, vector&lt;int&gt;(m + 1, 0));</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; n; i++)&#123;</span><br><span class="line">        for(int j &#x3D; 1; j &lt;&#x3D; m; j++)&#123;</span><br><span class="line">            f[i][j] &#x3D; max(f[i - 1][j], f[i][j - 1]);</span><br><span class="line">            if(text1[i - 1] &#x3D;&#x3D; test2[j - 1])</span><br><span class="line">            f[i][j] &#x3D; f[i - 1][j - 1] + 1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return f[n][m];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<h5 id="最长公共上升子序列-LCIS"><a href="#最长公共上升子序列-LCIS" class="headerlink" title="最长公共上升子序列(LCIS)"></a>最长公共上升子序列(LCIS)</h5><h5 id="数字三角形"><a href="#数字三角形" class="headerlink" title="数字三角形"></a>数字三角形</h5><p>题目描述:<br>    给定一个三角形，找出自顶向下的最小路径和，每一步只能移动到下一行中相邻的结带点上。</p>
+<pre><code>相邻的节点在这里指的是下标与上一层结点下标相同或者等于上层节点下标＋1的两个节点.(就是正上方节点，和正上方节点右边节点.比如５就是３和４。　
+
+   2
+ 3   4</code></pre>
+<p>   6   5   7<br>4    1    8   3</p>
+<p>自顶向下的最小路径和为11即 2 + 3 + 5 + 1 = 11.</p>
+<p>说明:<br>    如果只用O(n)的额外空间(n 为三角形的总行数)来解决这个问题，那么你的算法很加分.</p>
+<p>模型详解:<br>    该模型即为【线性DP】基础模型之一: 数字三角形， 即最常见的二维坐标系【DP模型】。<br>    考虑到【线性DP】中DP状态沿着各个维度线性增长的这一特点，以及本题所求的从上到下的最小路径和，不难得出状态f[i][j]表示从顶点出发到达第i行第j列这个点时的最小路径和.</p>
+<p>由于题目中限制(i, j)只能由(i - 1, j - 1)和(i - 1, j)两个点到达，因此我们可以得到如下【DP方程】:<br>    f[i][j] = triange[i][j] + min(f[i - 1][j - 1],f[i - 1][j]);</p>
+<p>书写代码时需要注意边界的处理,如对于特定的(i, j)来说，数字三角形中不存在(i - 1, j - 1) 或 (i - 1, j).</p>
+<p>这个模型我们可以得到:<br>    二维坐标系中也可以进行线性DP的，而且我们可以直接根据坐标点设置DP状态．</p>
+<p>代码实现:<br>    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int minnum(vector&lt;vector&lt;int&gt;&gt;&amp; trangle)&#123;</span><br><span class="line">    int n &#x3D; trangle.size(), ans &#x3D; INT_MAX;</span><br><span class="line">    vector&lt;vector&lt;int&gt;&gt; f(n + 1, vector&lt;int&gt;(n + 1, 0));</span><br><span class="line">    for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">        for(int j &#x3D; 0; j &lt; trangle.size(); j++)&#123;</span><br><span class="line">            if(j &#x3D;&#x3D; trangle[i].size() - 1)&#123;</span><br><span class="line">                f[i + 1][j + 1] &#x3D; trangle[i][j] + f[i][j];</span><br><span class="line">            &#125;else if(j &#x3D;&#x3D; 0)&#123;</span><br><span class="line">                f[i + 1][j + 1] &#x3D; trangle[i][j] + f[i][j + 1];</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                f[i + 1][j + 1] &#x3D; trangle[i][j] + min(f[i][j + 1], f[i][j]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>滚动数组优化:</p>
+<p>上述【DP转移方程】的时间复杂度为O(n^2)。空间复杂度也为O(n^2),但根据题目中的提示，本题是可以优化至O(n)空间复杂度.</p>
+<p>这种优化方法称为【滚动数组优化】，在【DP问题】中非常常见，主要适用于f[i][j]仅由f[i - 1][k]转移而来的情况.</p>
+<p>例如本题中，【DP转移方程】如下:<br>    f[i][j] = trangle[i][j] + min(f[i - 1][j - 1], f[i - 1][j]);</p>
+<p>不难发现, f[i][j] 仅由f[i - 1][j - 1]和f[i - 1][j]所决定，因此对于一个固定的i,我们可以从n到1倒叙枚举j,由此可以优化至如下转移方程:<br>    f[j] = trangle[i][j] + min(f[i - 1], f[j])<br>因为顺序会把前边的数据覆盖掉，从后往前（因为从上到下取最优子结构）所以避免了覆盖，可以依然从上往下取最优子结构。</p>
+<p>完整代码:<br>    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int minnum(vector&lt;vector&lt;int&gt;&gt;&amp; trangle)&#123;</span><br><span class="line">    int n &#x3D; trangle.size(), ans &#x3D; INT_MAX;</span><br><span class="line">    vector&lt;int&gt; f(n + 1, 0);</span><br><span class="line">    for(int i &#x3D; 0; i &lt; n; i++)&#123;</span><br><span class="line">        for(int j &#x3D; trangle[i].size() - 1; j &gt;&#x3D; 0; j--)&#123;</span><br><span class="line">            if(j &#x3D;&#x3D; trangle[i].size() - 1)&#123;</span><br><span class="line">                f[j + 1] &#x3D; trangle[i][j] + f[j];</span><br><span class="line">            &#125;</span><br><span class="line">            else if(j &#x3D;&#x3D; 0)</span><br><span class="line">                f[j + 1] &#x3D; trangle[i][j] + f[j + 1];</span><br><span class="line">            else</span><br><span class="line">                f[j + 1] &#x3D; trangle[i][j] + min(f[j + 1], f[j]);</span><br><span class="line">            if(i &#x3D;&#x3D; n - 1)</span><br><span class="line">            ans &#x3D; min(ans, f[j + 1]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>总结:<br>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</p>
+<ol>
+<li>如何识别这是一道线性DP的问题????     (满足线性增长，部分线性增长)。</li>
+<li>DP状态是如何设置?????                (状态的定义)</li>
+<li>如何根据DP状态得到DP转移方程????     (动态转移方程书写)</li>
+</ol>
+<h5 id="DP思路在深入总结"><a href="#DP思路在深入总结" class="headerlink" title="DP思路在深入总结!!!!"></a>DP思路在深入总结!!!!</h5><ol>
+<li><p>DP状态的确定有两个原则，一是最优子结构，二是无后效性，简要概括就是将原问题划分为多个子问题，且大规模问题最优值仅与小规模子问题最优值有关.</p>
+</li>
+<li><p>此处的大规模与小规模，就是DP问题的关键所在，也是DP问题分类的重要标准。 </p>
+</li>
+<li><p>确定完DP状态后，只需要分类讨论，细心枚举各种情况，即可得到DP转移方程。</p>
+</li>
+</ol>
+<h5 id="线性DP特点回顾"><a href="#线性DP特点回顾" class="headerlink" title="线性DP特点回顾"></a>线性DP特点回顾</h5><p>线性划分DP规模的动态规划算法被统称为线性DP。在线性DP中，DP状态从小规模转移到大规模的同时，DP状态沿着各个维度线性增长。</p>
+<h5 id="背包-第四种DP模型"><a href="#背包-第四种DP模型" class="headerlink" title="背包(第四种DP模型)"></a>背包(第四种DP模型)</h5><h6 id="01背包-滚动数组"><a href="#01背包-滚动数组" class="headerlink" title="01背包(滚动数组)"></a>01背包(滚动数组)</h6><p>01背包的基本模型如下:<br>一共有N个物品，其中第i个物品的体积为Vi, 价值为Wi。现要求选择一些物品放入一个容积为M的背包中，使得物品总体积不超过M的前提下,物品总价值最大。</p>
+<p>现在我们来思考下如何根据线性DP的知识来解决这个问题?</p>
+<p>线性DP的特点是DP状态沿着各个维度线性增长。而本问题中只有三个参数，分别是物品编号，物品体积以及物品价值。由于我们要求的是物品价值最大，因此不难想到DP状态为f[i][j],表示仅考虑前i个物品，所选物品总体积为j时的最大物品总价值。</p>
+<p>确定DP状态后，我们来考虑DP转移方程是什么???</p>
+<p>对于第i个物品来说，它只有两种状态，即要么取，要么不取。如果不取第i个物品，则f[i][j] = f[i - 1][j]; 如果取第i个物品，则f[i][j] = f[i - 1][j - vi] + wi,因此我们能得到如下DP转移方程:<br>    f[i][j] = max(f[i - 1][j], f[i - 1][j - vi] + wi);<br>其中初值f[0][0] = 0, f[0][i] 为负无穷，其中i 属于[1, M], 最终答案为max{f[N][j]},j属于[0, M],代码如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int DP()&#123;</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; M; i++)&#123;</span><br><span class="line">        f[0][i] &#x3D; INT_MIN;</span><br><span class="line">    &#125;</span><br><span class="line">    f[0][0] &#x3D; 0;</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; N; i++)&#123;</span><br><span class="line">        for(int j &#x3D; 0; j &lt;&#x3D; M; j++)&#123;</span><br><span class="line">            if(j &gt;&#x3D; v[i])</span><br><span class="line">               f[i][j] &#x3D; max(f[i - 1][j], f[i - 1][j - v[i]] + w[i]);</span><br><span class="line">            else </span><br><span class="line">               f[i][j] &#x3D; f[i - 1][j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    int ans &#x3D; 0;</span><br><span class="line">    for(int i &#x3D; 0; i &lt;&#x3D; M; i++)</span><br><span class="line">    ans &#x3D; max(ans, f[N][i]);</span><br><span class="line">    return ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>观察上述代码不难发现,f[i][j]仅由f[i - 1][j]和法f[i - 1][j - v[i]]决定，这就给了我们一个思考角度，能否将二维数组f的第一维去掉????</p>
+<p>答案显然是可以的，我们可以倒序枚举j，使得更新f[j]时f[j - v[i]]还未被更新，即f[j - v[i]]代表的实际是f[i - 1][j - v[i]]的值,看一下优化后的代码:<br>    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">int DP()&#123;</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; m; i++)&#123;</span><br><span class="line">        f[j] &#x3D; INT_MIN;</span><br><span class="line">    &#125;</span><br><span class="line">    f[0] &#x3D; 0;</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; N; i++)&#123;</span><br><span class="line">        for(int j &#x3D; M; j &gt;&#x3D; v[i]; j--)&#123;</span><br><span class="line">            f[j] &#x3D; max(f[j], f[j - v[i]] + w[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    int ans &#x3D; 0;</span><br><span class="line">    for(int i &#x3D; 0; i &lt;&#x3D; M; i++)&#123;</span><br><span class="line">        ans &#x3D; max(ans, f[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    return ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure><br>根据这段代码不难发现，第i轮，更新到f[j]时，f[j]与f[j - v[i]]代表的是i - 1轮的值，即f[i - 1][j] 与 f[i - 1][j - v[i]].而我们更新完f[j]后，f[j]的值即变为f[i][j]的值，由此我们大大降低了该算法的空间开销，这种优化方法叫做滚动数组.</p>
+<h6 id="完全背包-二进制拆分"><a href="#完全背包-二进制拆分" class="headerlink" title="完全背包(二进制拆分)"></a>完全背包(二进制拆分)</h6><p>了解完01背包模型后，我们继续介绍完全背包模型，其基本问题如下:<br>    一共有N类物品，其中第i类物品的体积为vi,价值为Wi,且每类物品可以选无数个，现要求选择一些物品放入一个容积为M的背包中，使得物品的总体积不超过M的前提下，物品总价值最大.</p>
+<pre><code>不难发现,完全背包和01背包最大的差别就在于每一类物品可以选多少个,其中完全背包每一类物品可以选无数个,而01背包中每一类物品只能选一个.
+
+了解完模型之后我们继续思考如何解决该问题.与01背包模型比较类似,本问题也只有三个参数,分别是物品编号,物品体积以及物品价值.因此我们按照01背包的DP状态,即f[i][j]表示仅考虑前i类物品,所选物品总体积为j时的最大物品总价值.
+
+由于每一类物品可以选无数次,因此对于f[i][j]来说,
+如果不可取     f[i][j] = f[i - 1][j],
+如果取一个则   f[i][j] = f[i - 1][j - v[i]] + w[i],
+如果取两个则   f[i][j] = f[i - 1][j - 2 * v[i]] + 2*w[i],
+如果是x个则    f[i][j] = f[i - 1][j - x * v[i]] + x * w[i].
+因此可以得到  f[i][j] = max(f[i - 1][j], f[i - 1][j - x * v[i]] + x * w[i]), x &gt;= 0;
+
+但这样我们需要不断的遍历x导致时间复杂度过高,我们还需继续优化.(这里的x只是一个参数)
+
+f[i][j] = max(f[i - 1][j], f[i - 1][(j - v[i]) - x * v[i]] + w[i] + x * w[i]) ,x &gt;= 0;
+
+又因为f[i][j - v[i]] = max(f[i - 1][(j - v[i]) - x * v[i] + x * w[i]]), x &gt;= 0.
+因此只需正序遍历j,即保证求取f[i][j]时,f[i][j - v[i]]已经得到,DP转移方程就可以优化为:
+f[i][j] = max(f[i - 1][j], f[i][j - v[i]] + w[i]);
+对于01背包中
+f[i][j] = f[i - 1][j - v[i]] + w[i],
+完全背包中每个物品可以取多次,因此转移方程变为
+f[i][j] = f[i][j - v[i]] + w[i];</code></pre>
+<p>代码如下:<br>    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int DP()&#123;</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; M; i++)&#123;</span><br><span class="line">        f[0][j] &#x3D; IN_MIN;</span><br><span class="line">    &#125;</span><br><span class="line">    f[0][0] &#x3D; 0;</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; N; i++)&#123;</span><br><span class="line">        for(int j &#x3D; 0; j &lt;&#x3D; M; j++)&#123;</span><br><span class="line">            if(j &gt;&#x3D; v[i])</span><br><span class="line">                f[i][j] &#x3D; max(f[i - 1][j], f[i][j - v[i]] + w[i]);</span><br><span class="line">            else </span><br><span class="line">                f[i][j] &#x3D; f[i - 1][j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    int ans &#x3D; 0;</span><br><span class="line">    for(int  i &#x3D; 0; i &lt;&#x3D; M; i++)&#123;</span><br><span class="line">        ans &#x3D; max(ans, f[N][i]);</span><br><span class="line">    &#125;</span><br><span class="line">    return ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>    滚动数组优化:<br>  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int DP()&#123;</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; M; i++)&#123;</span><br><span class="line">        f[0][j] &#x3D; IN_MIN;</span><br><span class="line">    &#125;</span><br><span class="line">    f[0][0] &#x3D; 0;</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; N; i++)&#123;</span><br><span class="line">        for(int j &#x3D; v[i]; j &lt;&#x3D; M; j++)&#123;</span><br><span class="line">                f[j] &#x3D; max(f[j], f[j - v[i]] + w[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    int ans &#x3D; 0;</span><br><span class="line">    for(int  i &#x3D; 0; i &lt;&#x3D; M; i++)&#123;</span><br><span class="line">        ans &#x3D; max(ans, f[N][i]);</span><br><span class="line">    &#125;</span><br><span class="line">    return ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<h6 id="多重背包"><a href="#多重背包" class="headerlink" title="多重背包"></a>多重背包</h6><p>多重背包模型,基本问题如下所示:<br>    一共有N类物品,其中第i类物品的体积为V[i],价值为W{i},且每类物品只有C[i]个(c[i] &gt;= 0),现要求选择一些物品放入一个容积为M的背包中,使得物品的总体积不超过M的前提下,物品总价值最大.</p>
+<pre><code>将该问题与01背包模型进行对比,可以发现唯一差别在于01背包中每一类物品的c[i] = 1, 因此我们可以将多重背包换成01背包进行求解.
+首先比较容易想到的是,我们可以进行暴力拆分,即将一类物品拆分为c[i]个,总物品数量从N变为(求和符号)(1- N) c[i]()就是把每个物品变成一个新的物品来计算,,因此我们可以直接用01背包模型来进行求解.
+具体代码如下: 
+    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int DP()&#123;</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; M; i++)&#123;</span><br><span class="line">        f[i] &#x3D; INT_MIN;</span><br><span class="line">    &#125;</span><br><span class="line">    f[0] &#x3D; 0;</span><br><span class="line">    for(int i &#x3D; 1; i &lt;&#x3D; N; i++)&#123;</span><br><span class="line">        for(int k &#x3D; 1; k &lt;&#x3D; c[i]; k++)&#123;</span><br><span class="line">            for(int j &#x3D; M; j  &gt;&#x3D; v[i]; j--)&#123;</span><br><span class="line">                f[j] &#x3D; max(f[j], f[j - v[i]] + w[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    int ans &#x3D; 0;</span><br><span class="line">    for(int i &#x3D; 0; i &lt;&#x3D; M; i++)&#123;</span><br><span class="line">        ans &#x3D; max(ans, f[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    return ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+    直接暴力拆分使问题变得简单,但是时间复杂度却显著提高为 O(M *c[i](i = 1 ~n 求累加和))．我们还需继续优化!!!!!
+
+    直接暴力拆分使得该问题变得简单，但是时间复杂度却显著增加，为 图片。于是我们需要思考有没有什么方法可以对该问题进行优化？</code></pre>
+<p>考虑二进制的思想，我们考虑把第  种物品换成若干件物品，使得原问题中第  种物品可取的每种策略——取  件——均能等价于取若干件代换以后的物品。另外，取超过  件的策略必不能出现。方法是：将第  种物品分成若干件物品，其中每件物品有一个系数，这件物品的费用和价值均是原来的费用和价值乘以这个系数。使这些系数分别为  ，且  是满足  的最大整数。例如，如果  为 13，就将这种物品分成系数分别为 1, 2, 4, 6 的 4 件物品。分成的这几件物品的系数和为  ，表明不可能取多于  件的第  种物品。另外这种方法也能保证对于  间的每一个整数，均可以用若干个系数的和表示，这个证明可以分  和  两段来分别讨论得出，并不难，希望题主自己思考尝试一下。这样就将第  种物品分成了  种物品，将原问题转化为了复杂度为  的 01 背包问题，是很大的改进。</p>
+<p>二进制优化：</p>
+<p>二进制优化的思想还是很巧妙的，根据c【i】得到一组这样的数 2^0,2^1,2^2,2^3…..2^(k-1) , c-2^k+1  其中k是满足2^k小于c的最大值，就像c=7=111，2^k=100=4  ;</p>
+<p> c=9=1001, 2^k=1000=8  ;  c=8=1000  2^k=0100=4   </p>
+<p>得到这组数的目的是什么呢，</p>
+<p>1到c之间的所有数都可以由这组数组合得到（选取相加），而从这组数里任意选任意个（每个数最多只能选一次）加在一起得到的数也必定是1~c这个闭区间内的</p>
+<p>例如14=1110   他对应的这组数为：1，2，4，7  可以试一试，通过前三个组合可以得到1<del>7之间的所有数，而加上7就可以得到8</del>14之间的所有数，因此可以得到1~14之间的任何数，所以我们可以只对这组数逐一进行01背包，而不用从1到c都要01背包一次，算是把O（c）的部分优化成了O（logc）</p>
+<p> </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">void erjinzhi()</span><br><span class="line">&#123;</span><br><span class="line">	int i,j,k,m;</span><br><span class="line">	memset(dp,0,sizeof(dp));</span><br><span class="line">	for(i&#x3D;0;i&lt;n;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		for(k&#x3D;1;(k&lt;&lt;1)&lt;&#x3D;c[i];k&lt;&lt;&#x3D;1)</span><br><span class="line">		&#123;</span><br><span class="line">			for(j&#x3D;V;j&gt;&#x3D;k*v[i];j--)</span><br><span class="line">			&#123;</span><br><span class="line">				dp[j]&#x3D;max(dp[j],dp[j-k*v[i]]+k*w[i]);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		m&#x3D;c[i]-k+1;</span><br><span class="line">		for(j&#x3D;V;j&gt;&#x3D;m*v[i];j--)</span><br><span class="line">		&#123;</span><br><span class="line">			dp[j]&#x3D;max(dp[j],dp[j-m*v[i]]+m*w[i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>单调队列优化</p>
+<p> </p>
+<p>参考了这篇博客的思想 <a target="_blank" rel="noopener" href="http://blog.csdn.net/flyinghearts/article/details/5898183">http://blog.csdn.net/flyinghearts/article/details/5898183</a>  以及k爷的代码<a target="_blank" rel="noopener" href="http://blog.csdn.net/lxy767087094/article/details/54730613%EF%BC%8C%E5%8A%A0%E4%B8%8A%E8%87%AA%E5%B7%B1%E7%9A%84%E7%90%86%E8%A7%A3">http://blog.csdn.net/lxy767087094/article/details/54730613，加上自己的理解</a></p>
+<p>那篇博客大体思想讲的很好，实现过程是用了两个队列，一个辅佐队列，不易理解</p>
+<p> </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">struct node</span><br><span class="line">&#123;</span><br><span class="line">	int num,value;</span><br><span class="line">&#125;que[100000];</span><br><span class="line">int tail,head;</span><br><span class="line">void push(int x,int y)</span><br><span class="line">&#123;</span><br><span class="line">	while(tail&gt;head&amp;&amp;que[tail-1].value&lt;y)</span><br><span class="line">	&#123;</span><br><span class="line">		tail--;</span><br><span class="line">	&#125;</span><br><span class="line">	que[tail].num&#x3D;x;</span><br><span class="line">	que[tail++].value&#x3D;y;</span><br><span class="line">&#125;</span><br><span class="line">void singlequeue()</span><br><span class="line">&#123;</span><br><span class="line">	int i,d,j;</span><br><span class="line">	memset(dp,0,sizeof(dp));</span><br><span class="line">	for(i&#x3D;0;i&lt;n;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		c[i]&#x3D;min(c[i],V&#x2F;v[i]);</span><br><span class="line">		for(d&#x3D;0;d&lt;v[i];d++)</span><br><span class="line">		&#123;</span><br><span class="line">			head&#x3D;tail&#x3D;0;</span><br><span class="line">			for(j&#x3D;0;j&lt;&#x3D;(V-d)&#x2F;v[i];j++)</span><br><span class="line">			&#123;</span><br><span class="line">				push(j,dp[j*v[i]+d]-j*w[i]);</span><br><span class="line">				while(que[head].num&lt;j-c[i]&amp;&amp;tail&gt;head)</span><br><span class="line">				head++;</span><br><span class="line">				dp[j*v[i]+d]&#x3D;que[head].value+j*w[i];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>总结!!!!!!:<br>    背包问题特点</p>
+<p>至此我们介绍完了三大常见的背包模型，分别是「0/1 背包」、「完全背包」、「多重背包」，其区别仅仅在于每一类物品可以选多少个。其中「0/1 背包」是每一类物品只能选一个，「完全背包」则是每一类物品可以选无数个，而「多重背包」则是第 i 类物品最多可以选 图片个。<br>因此我们可以归纳「背包问题」的特点：有 N 类物品，每类物品可以选 1 个、无数个或 图片个，问是否存在一种选取方案，使其满足某种条件。或者是否存在一种选取方案，使其满足某种条件的同时，得到某种参数的最值。<br>这样归纳可能还是过于抽象，因此我们将在下文「习题练习」中讲解一些具体的题型来帮助大家理解。</p>
+<hr>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">lys-studys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/posts/10547/">http://example.com/posts/10547/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/8091/"><img class="next-cover" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">链表和树</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By lys-studys</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">我们相遇不是意外~ <a target="_blank" rel="noopener" href="https://lys-studys.github.io//">blog</a>!</div><div class="icp"><a target="_blank" rel="noopener" href="http://www.beian.miit.gov.cn/state/outPortal/loginPortal.action"><img class="icp-icon" src="/img/icp.png"/><span>粵ICP備xxxx</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="chat_btn" type="button" title="rightside.chat_btn"><i class="fas fa-sms"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>var endLoading = function () {
+  document.body.style.overflow = 'auto';
+  document.getElementById('loading-box').classList.add("loaded")
+}
+window.addEventListener('load',endLoading)</script><div class="js-pjax"><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    $.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js', function () {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'default',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    window.valine = new Valine({
+      el: '#vcomment',
+      appId: 'K6YAjTUpfqvIIJRgat2mpicY-gzGzoHsz',
+      appKey: 'TiK1kxcHhW26MWKdEgTtxWlm',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    });
+    if ('nick,mail') { valine.config.requiredFields= 'nick,mail'.split(',') }
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><canvas class="fireworks"></canvas><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script defer="defer" id="ribbon" src="/js/third-party/canvas-ribbon.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="ribbon_piao" mobile="true" src="/js/third-party/piao.js"></script><script src="/js/third-party/activate-power-mode.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="/js/third-party/click_heart.js" async="async"></script><script src="/js/third-party/ClickShowText.js" async="async"></script><script>(function(d, w, c) {
+    w.ChatraID = '';
+    var s = d.createElement('script');
+    w[c] = w[c] || function() {
+        (w[c].q = w[c].q || []).push(arguments);
+    };
+    s.async = true;
+    s.src = 'https://call.chatra.io/chatra.js';
+    if (d.head) d.head.appendChild(s);
+})(document, window, 'Chatra');
+
+if (true) {
+  var chatBtnFn = () => {
+    var chatBtn = document.getElementById("chat_btn")
+    chatBtn.addEventListener("click", function(){
+      Chatra('openChat')
+    });
+  }
+  chatBtnFn()
+} else {
+  if (true) {
+    function chatBtnHide () {
+      Chatra('hide')
+    }
+    function chatBtnShow () {
+      Chatra('show')
+    }
+  }
+}</script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
