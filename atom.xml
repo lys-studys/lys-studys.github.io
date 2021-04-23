@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-04-23T14:44:47.903Z</updated>
+  <updated>2021-04-23T15:58:02.170Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>强制类型转换与内存对齐问题</title>
+    <link href="http://example.com/posts/6688/"/>
+    <id>http://example.com/posts/6688/</id>
+    <published>2021-04-23T15:48:03.000Z</published>
+    <updated>2021-04-23T15:58:02.170Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>天行健，菜鸟以自强不息!!</p><h3 id="语言强制类型转换"><a href="#语言强制类型转换" class="headerlink" title="语言强制类型转换  "></a>语言强制类型转换  </h3><p> <br>理解：不论是什么类型，在内存中存储的都是二进制，所以之间可以相互转换，而每个内存单元为一个字节，所以强制类型转换就是在分配这些字节。<br>概要：</p><p>C语言中，任何一个变量都必须占有一个地址，而这个地址空间内的0-1代码就是这个变量的值。不同的数据类型占有的空间大小不一，但是他们都必须有个地址，而这个地址就是硬件访问的依据，而名字只是提供给程序员的一种记住这个地址的方便一点的方法。但是，不同的变量在机器中都是0-1代码，所以，我们不能简单的通过检查一个值的位来判断它的类型。</p><p>例如，定义如下：</p><p>int a;</p><p> float b;</p><p>double c;</p><p> long double d;</p><p>(假设它们所占的字节分别是4、8、8、10，而且连续存储于某个地址空间，起始地址是100，则我们可以得到如下内存分布)</p><p>a变量就是由以地址100开始到103结束的4个字节内存空间内的0-1代码组成。b变量则是由以地址104开始到112结束的8个字节内存空间内的0-1代码组成。而在机器中，这些内存都是连续的0-1代码，机器并不知道100<del>103是整型而104</del>111是float型，所有这些类型都是编译器告知的。当我们用a时，由于前面把a定义为int型，则编译器知道从a的地址开始向后取4个字节再把它解释成int型。那么(float)a，就是先按照int类型取出该数值，再将该数值按照int to float的规则转换成float型。所以强制类型转换就是按照某个变量的类型取出该变量的值，再按照**<em>to**</em>的规则进行强制转转换。如果是(类型名)常数，则是将该常数按照常数to类型 的规则进行强制转换。</p><p>指针也是一个变量，它自己占据一个4个字节的地址空间（由于程序的寻址空间是2^32次方，即4GB，所以用4个字节表示指针就已经能指向任何程序能够寻址到的空间了，所以指针的大小为4字节），他的值是另一个东西的地址，这个东西可以是普通变量，结构体，还可以是个函数等等。由于，指针的大小是4字节，所以，我们可以将指针强制转换成int型或者其他类型。同样，我们也可以将任何一个常数转换成int型再赋值给指针。所有的指针所占的空间大小都是4字节，他们只是声明的类型不同，他们的值都是地址指向某个东西，他们对于机器来说没有本质差别，他们之间可以进行强制类型转换。<br>指针 to 指针的强制类型转换是指将指针所指的内容的类型由原先的类型转换为后面的类型。</p><p> </p><p>int a = 1;</p><p>int *p = &a;</p><p>float <em>p1 = (float</em>)p;</p><p>则p和p1的值都是&amp;a，但是<em>p是将&amp;a地址中的值按照int型变量进行解释，而</em>p1则是将&amp;a地址中的值按照float型变量进行解释。</p><p>鉴于指针之间这种灵活的强制类型转换的需求和出于简化代码的考虑，ANSI C引入了空指针即void*。void指针又名万能指针，在现在的很多程序中，当参数不确定时就用万能指针代替，这一类的指针在线程\进程函数里特别常见。</p><p>ANSI C规定，void指针可以复制给其他任意类型的指针，其他任意类型的指针也可以复制给void指针，他们之间复制不需要强制类型转换。当然任何地址也可以复制给void型指针。我们在《网络编程》中经常会看到accept(socket, (struct sockaddr *)&amp;saddr_c, &amp;lenth)之类的语句在&amp;saddr_c之前需要增加代码(struct sockaddr <em>)是因为当此函数被设计的时候ANSI C还没有提出void</em>的概念。所有的地址统一用struct sockaddr类型标识，该函数的第二个参数也是指向struct sockaddr类型的指针，此处是强制类型转换。</p><p>当然，在某些编译器中不同类型的指针也可以进行直接赋值，但一般情况下会给出类型不匹配的警告。要求程序员显示的给出指针强制类型转换可以提醒程序员小心使用指针，对于明确程序目的具有一定的好处。</p><ol><li>指针类型强制转换</li></ol><p>int m;</p><p>int *pm = &m;</p><p>char *cp = (char *)&m;</p><p>pm指向一个整型，cp指向整型数的第一个字节</p><ol start="2"><li>结构体之间的强制转换</li></ol><p>struct str1 a;</p><p> </p><p>struct str2 b;</p><p>a=(struct str1) b;                  //this is wrong</p><p>a=<em>((struct str1</em>)&amp;b);         //this is correct</p><p> </p><ol start="3"><li>关于一个程序的解释</li></ol><p> </p><p>int main(void)</p><p>{</p><pre><code>    int a［4] = &#123;1, 2, 3, 4&#125;;    int *ptr1=(int *)(&amp;a+1);    int *ptr2=(int *)((int)a+1);    int *c = *(a + 1);    printf(&quot;%x, %x,%x\n&quot;, ptr1[-1], *ptr2,*c);    return 0;</code></pre><p>}</p><p>输出分别为4 和2000000,2 </p><p>式子&amp;a+1表示的是指针加法运算，而不是普通的数值加法运算</p><ol><li>&amp;a+1</li></ol><p>   &amp;a表示数组指针，&amp;a+1表示指向下一个数组，强制转换为int型指针，减一即指向a［3]=4;在前面两篇文章中有详细解释。而ptr1［-1]= <em>(ptr1 - 1) 由于ptr1是指针，指向数组a后面的下一个元素，而ptr1-1就是ptr1这个指针往前移动一个单位，移动之后这个指针指向了数组a的最后一个元素。所以就有</em>(ptr1-1)=4。</p><ol start="2"><li>(int *)((int)a+1)</li></ol><p>       指针ptr2的处理是把数组名a强制转换成整型变量，然后再加1，然后再强制转换成整型指针，即是让ptr2指向a[0]的第二个字节，此时打印的内容就是ptr2所指向的往后4个字节的内容，也就是a{0}的后三个字节和a[1]的第一个字节上面的图没有画出里面的内容。此时需要考虑大小端问题。</p><p>    </p><p>    字节序分两种，大端字节序(big-endian) ，小端字节序(little-endian)   </p><p>    1、所谓大端(big-endian)序，就是高优先位对应高有效位。就是读取或者存放数据时，最低位 对应高地址 。</p><p>    2、所谓小端(little-endian)序，就是高优先位对应低有效位 。就是读取或者存放数据时，最低 位对应低地址 。</p><p>       由于x86平台是小端序的，因此将会打印出0200 0000，如果题目中没有说明在x86平台，那答案是不确定的，取决于具体的平台，例如ARM平台就是大端序的。 </p><ol start="3"><li>*(a + 1)  </li></ol><p>      *(a + 1)  此时的a已经是一个常指针了，这个表达式计算出a所指向元素后面的第2个元素的地址，然后对它解引用得到相应的值。这个表达式等价于int last = a［1]</p><p>结构体类型的强制类型转换</p><p>结构体和int等类型一样，都是数据类型。其他类型怎么转换，结构体就怎么转换，没有什么特殊的地方。<br>楼主可能想知道的不是结构体怎样强制转换这个问题吧，猜测，楼主想知道如下几个问题：<br>如果将一个结构体强制类型转换为另一个结构体（或者类型），那这个结构体的成员会怎样了？<br>如果将一个结构体强制类型转换为另一个结构体（或者类型），那么这个结构体成员的数值又会是什么了？<br>解答：</p><ol><li>结构体的本质是：我们和C语言约定了一段内存空间的长短，及其内容的安排。假设下面两个结构体：<br>struct A1<br>{<br>     int a;<br>     char b;</li></ol><p>};</p><p>struct A2<br>{<br>        char a;<br>        int b;</p><p>};<br>接着，用struct A1和struct A2定义变量，并赋初值：<br>struct A1 x = {10, ‘A’};<br>struct A2 y = {‘A’, 10};<br>现在最重要的是，要知道x和y的内存情况：<br>x的内存安排是：前4B，后1B；<br>y的内存安排是：前1B，后4B。<br>如果有struct A2 z;<br>z.a = ((struct A2)x).a;<br>那么，C语言会对x的空间，按照struct A2的格局进行解释:</p><pre><code>也就是说，将x的第一个字节看成第一个成员，且按ASCII码处理数据，而将后面的4B看成第二个成员，并按补码格式解释数据。内存对齐小结：在C语言面试和考试中经常会遇到内存字节对齐的问题。今天就来对字节对齐的知识进行小结一下。首先说说为什么要对齐。为了提高效率，计算机从内存中取数据是按照一个固定长度的。以32位机为例，它每次取32个位，也就是4个字节（每字节8个位，计算机基础知识，别说不知道）。字节对齐有什么好处？以int型数据为例，如果它在内存中存放的位置按4字节对齐，也就是说1个int的数据全部落在计算机一次取数的区间内，那么只需要取一次就可以了。如图a-1. 1. 如果不对齐，很不巧，这个int数据刚好跨越了取数的边界，这样就需要取两次才能把这个int的数据全部取到，这样效率也就降低了。                        </code></pre><p>                                    </p><pre><code>内存对齐是会浪费一些空间的。但是这种空间上得浪费却可以减少取数的时间。这是典型的一种以空间换时间的做法。空间与时间孰优孰略这个每个人都有自己的看法，但是C语言既然采取了这种以空间换时间的策略，就必然有它的道理。况且，在存储器越来越便宜的今天，这一点点的空间上的浪费就不算什么了。需要说明的是，字节对齐不同的编译器可能会采用不同的优化策略，以下以GCC为例讲解结构体的对齐.一、原则：1. 结构体内成员按自身按自身长度自对齐。自身长度，如char=1，short=2，int=4，double=8,。所谓自对齐，指的是该成员的起始位置的内存地址必须是它自身长度的整数倍。如int只能以0,4,8这类的地址开始2. 结构体的总大小为结构体的有效对齐值的整数倍结构体的有效对齐值的确定：1）当未明确指定时，以结构体中最长的成员的长度为其有效值2）当用#pragma pack(n)指定时，以n和结构体中最长的成员的长度中较小者为其值。3）当用__attribute__ ((__packed__))指定长度时，强制按照此值为结构体的有效对齐值二、例子1. struct AA&#123;        char a;        int b;        char c; &#125;aa结果，sizeof（aa）=12何解？首先假设结构体内存起始地址为0，那么地址的分布如下0  a1  234  b5  b6  b7  b8  c91011char的字对齐长度为1，所以可以在任何地址开始，但是，int自对齐长度为4，必须以4的倍数地址开始。所以，尽管1-3空着，但b也只能从4开始。再加上c后，整个结构体的总长度为9，结构体的有效对齐值为其中最大的成员即int的长度4，所以，结构体的大小向上扩展到12，即9-11的地址空着。2. struct AA&#123;        char a;    char c;         int b;    &#125;aasizeof（aa）=8，为什么呢0  a1  c234  b5  b6  b7  b因为c为char类型，字对齐长度为1，所以可以有效的利用1-3间的空格。看见了吧，变量定义的位置的不同时有可能影响结构体的大小的哦！3. #pragma pack(2)struct AA&#123;        char a;        int b;        char c; &#125;aasizeof（aa）=10,为什么呢？a到c只占9字节长度，因为结构体的有效对齐长度在pack指定的2和int的4中取较小的值2。故取2的倍数10。如果当pack指定为8呢?那就仍然按4来对齐，结果仍然是12。 4. </code></pre><p>struct AA{</p><pre><code>    char a;    int b;    char c; </code></pre><p>}<strong>attribute</strong>((<strong>8</strong>))aa</p><p>sizeof(aa)=16,）</p><p>为咩？其实a到c仍然只占9字节长度，但结构体以8对齐，故取8的倍数16.</p><p>如果其指定2，则结果为10</p><p>如果pragma pack和<strong>attribute</strong> 同时指定呢？以<strong>attribute</strong> 的为准。</p><p>需要说明的是，不管pragma pack和__attribute__如何指定，结构体内部成员的自对齐仍然按照其自身的对齐值。</p><p> 另外，不同的编译器可能会对内存的分布进行优化，</p><p> 例如有些编译器会把立体1中的程序优化成例题2的样子。但这属于编译器的问题，</p><p> 这里不做详细讨论。如果要作为编程的参考的话，最好当做编译器不会做优化，</p><p> 尽量在保持代码清晰的情况下，自己手动将例题1优化成例题2的样子。</p><p> 如果是做题的话，按照以上原则做就可以了，不用考虑不同编译器的特性。</p><p>(参考老K的代码world)[<a href="https://blog.csdn.net/qq_33366098/article/details/78137422]">https://blog.csdn.net/qq_33366098/article/details/78137422]</a></p><hr>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    <category term="c/c++" scheme="http://example.com/categories/c-c/"/>
+    
+    
+    <category term="c/c++" scheme="http://example.com/tags/c-c/"/>
+    
+  </entry>
   
   <entry>
     <title>均匀的生成随机数</title>
@@ -445,30 +469,6 @@
     
     
     <category term="练习" scheme="http://example.com/tags/%E7%BB%83%E4%B9%A0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>c++_thread_pool</title>
-    <link href="http://example.com/posts/49877/"/>
-    <id>http://example.com/posts/49877/</id>
-    <published>2020-12-16T05:18:20.000Z</published>
-    <updated>2020-12-21T14:14:13.139Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><h3 id="线程池的管理"><a href="#线程池的管理" class="headerlink" title="线程池的管理"></a>线程池的管理</h3><p>性能要求</p><ol><li>多线程的数量．（对应数组开辟相对应的线程数量）</li><li>能够执行我们传入的任意函数．（func打包操作(c++中打包成一个对象)一个任务）func函数是不统一的，但是打包的任务是统一的．把这个任务依次放到队列中．线程池能到队列中取任务．这里形成了一种生产者消费者模型．放任务的为生产者，取任务(线程池)为消费者.</li><li>执行过程中按优先级顺序．(每个任务有一个优先级，把任务写入队列，按优先级排序，这里涉及到优先队列)</li></ol><h3 id="类的分析与设计-从小到大"><a href="#类的分析与设计-从小到大" class="headerlink" title="类的分析与设计(从小到大)"></a>类的分析与设计(从小到大)</h3><ol><li>一个类代表任务类</li><li>一个代表我们的线程池</li></ol><p>涉及到知识点:<br>    bind()绑定函数，函数名和函数参数打包在一起，并不去执行，如果传入的参数不为引用的时候，不改变外部参数的值，而是进行拷贝了一份，想到局部变量.<br>    以下部分在关键字中讲解:<br>    1. ref()<br>    2. forward()<br>    3. move()<br>    4. 条件变量 </p><hr>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
-    <category term="c++" scheme="http://example.com/categories/c/"/>
-    
-    
-    <category term="c++" scheme="http://example.com/tags/c/"/>
     
   </entry>
   

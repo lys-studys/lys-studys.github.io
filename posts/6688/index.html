@@ -1,0 +1,444 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>强制类型转换与内存对齐问题 | 陌上花开缓缓归</title><meta name="description" content="天行健，菜鸟以自强不息!! 语言强制类型转换   理解：不论是什么类型，在内存中存储的都是二进制，所以之间可以相互转换，而每个内存单元为一个字节，所以强制类型转换就是在分配这些字节。概要： C语言中，任何一个变量都必须占有一个地址，而这个地址空间内的0-1代码就是这个变量的值。不同的数据类型占有的空间大小不一，但是他们都必须有个地址，而这个地址就是硬件访问的依据，而名字只是提供给程序员的一种记住这"><meta name="keywords" content="c/c++"><meta name="author" content="lys-studys"><meta name="copyright" content="lys-studys"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="shortcut icon" href="/img/timg.jpeg"><link rel="canonical" href="http://example.com/posts/6688/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="yandex-verification" content="{&quot;theme_color&quot;:{&quot;enable&quot;:true,&quot;main&quot;:&quot;#49B1F5&quot;,&quot;paginator&quot;:&quot;#00c4b6&quot;,&quot;button_hover&quot;:&quot;#FF7242&quot;,&quot;text_selection&quot;:&quot;#00c4b6&quot;,&quot;link_color&quot;:&quot;#99a9bf&quot;,&quot;meta_color&quot;:&quot;#858585&quot;,&quot;hr_color&quot;:&quot;#A4D8FA&quot;,&quot;code_foreground&quot;:&quot;#F47466&quot;,&quot;code_background&quot;:&quot;rgba(27, 31, 35, .05)&quot;,&quot;toc_color&quot;:&quot;#00c4b6&quot;,&quot;blockquote_padding_color&quot;:&quot;#49b1f5&quot;,&quot;blockquote_background_color&quot;:&quot;#49b1f5&quot;}}"/><meta property="og:type" content="article"><meta property="og:title" content="强制类型转换与内存对齐问题"><meta property="og:url" content="http://example.com/posts/6688/"><meta property="og:site_name" content="陌上花开缓缓归"><meta property="og:description" content="天行健，菜鸟以自强不息!! 语言强制类型转换   理解：不论是什么类型，在内存中存储的都是二进制，所以之间可以相互转换，而每个内存单元为一个字节，所以强制类型转换就是在分配这些字节。概要： C语言中，任何一个变量都必须占有一个地址，而这个地址空间内的0-1代码就是这个变量的值。不同的数据类型占有的空间大小不一，但是他们都必须有个地址，而这个地址就是硬件访问的依据，而名字只是提供给程序员的一种记住这"><meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><meta property="article:published_time" content="2021-04-23T15:48:03.000Z"><meta property="article:modified_time" content="2021-04-23T15:58:02.170Z"><meta name="twitter:card" content="summary"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  hexoversion: '5.2.0',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime: 'days',
+  date_suffix: {"one_hour":"Just","hours":"hours ago","day":"days ago"},
+  copyright: {"limitCount":50,"languages":{"author":"Author: lys-studys","link":"Link: ","source":"Source: 陌上花开缓缓归","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  ClickShowText: {"text":"I,LOVE,YOU","fontSize":"15px"},
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"message_prev":"Press","message_next":"to bookmark this page"},"chs_to_cht":"Traditional Chinese Activated Manually","cht_to_chs":"Simplified Chinese Activated Manually","day_to_night":"Dark Mode Activated Manually","night_to_day":"Light Mode Activated Manually","bgLight":"#49b1f5","bgDark":"#121212","position":"bottom-left"},
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+    },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isSidebar: true,
+  postUpdate: '2021-04-23 23:58:02'
+}</script><noscript><style type="text/css">
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+  }
+}
+
+var autoChangeMode = 'true'
+var t = saveToLocal.get('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (saveToLocal.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="./source/css/background.css"><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="陌上花开缓缓归" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">68</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">31</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">26</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> message</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div id="body-wrap"><div id="web_bg" data-type="photo"></div><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E8%A8%80%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-number">1.</span> <span class="toc-text">语言强制类型转换  </span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">陌上花开缓缓归</a></span><span id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> message</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">强制类型转换与内存对齐问题</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-04-23T15:48:03.000Z" title="Created 2021-04-23 23:48:03">2021-04-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-04-23T15:58:02.170Z" title="Updated 2021-04-23 23:58:02">2021-04-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/c-c/">c/c++</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>天行健，菜鸟以自强不息!!</p>
+<h3 id="语言强制类型转换"><a href="#语言强制类型转换" class="headerlink" title="语言强制类型转换  "></a>语言强制类型转换  </h3><p> <br>理解：不论是什么类型，在内存中存储的都是二进制，所以之间可以相互转换，而每个内存单元为一个字节，所以强制类型转换就是在分配这些字节。<br>概要：</p>
+<p>C语言中，任何一个变量都必须占有一个地址，而这个地址空间内的0-1代码就是这个变量的值。不同的数据类型占有的空间大小不一，但是他们都必须有个地址，而这个地址就是硬件访问的依据，而名字只是提供给程序员的一种记住这个地址的方便一点的方法。但是，不同的变量在机器中都是0-1代码，所以，我们不能简单的通过检查一个值的位来判断它的类型。</p>
+<p>例如，定义如下：</p>
+<p>int a;</p>
+<p> float b;</p>
+<p>double c;</p>
+<p> long double d;</p>
+<p>(假设它们所占的字节分别是4、8、8、10，而且连续存储于某个地址空间，起始地址是100，则我们可以得到如下内存分布)</p>
+<p>a变量就是由以地址100开始到103结束的4个字节内存空间内的0-1代码组成。b变量则是由以地址104开始到112结束的8个字节内存空间内的0-1代码组成。而在机器中，这些内存都是连续的0-1代码，机器并不知道100<del>103是整型而104</del>111是float型，所有这些类型都是编译器告知的。当我们用a时，由于前面把a定义为int型，则编译器知道从a的地址开始向后取4个字节再把它解释成int型。那么(float)a，就是先按照int类型取出该数值，再将该数值按照int to float的规则转换成float型。所以强制类型转换就是按照某个变量的类型取出该变量的值，再按照**<em>to**</em>的规则进行强制转转换。如果是(类型名)常数，则是将该常数按照常数to类型 的规则进行强制转换。</p>
+<p>指针也是一个变量，它自己占据一个4个字节的地址空间（由于程序的寻址空间是2^32次方，即4GB，所以用4个字节表示指针就已经能指向任何程序能够寻址到的空间了，所以指针的大小为4字节），他的值是另一个东西的地址，这个东西可以是普通变量，结构体，还可以是个函数等等。由于，指针的大小是4字节，所以，我们可以将指针强制转换成int型或者其他类型。同样，我们也可以将任何一个常数转换成int型再赋值给指针。所有的指针所占的空间大小都是4字节，他们只是声明的类型不同，他们的值都是地址指向某个东西，他们对于机器来说没有本质差别，他们之间可以进行强制类型转换。<br>指针 to 指针的强制类型转换是指将指针所指的内容的类型由原先的类型转换为后面的类型。</p>
+<p> </p>
+<p>int a = 1;</p>
+<p>int *p = &a;</p>
+<p>float <em>p1 = (float</em>)p;</p>
+<p>则p和p1的值都是&amp;a，但是<em>p是将&amp;a地址中的值按照int型变量进行解释，而</em>p1则是将&amp;a地址中的值按照float型变量进行解释。</p>
+<p>鉴于指针之间这种灵活的强制类型转换的需求和出于简化代码的考虑，ANSI C引入了空指针即void*。void指针又名万能指针，在现在的很多程序中，当参数不确定时就用万能指针代替，这一类的指针在线程\进程函数里特别常见。</p>
+<p>ANSI C规定，void指针可以复制给其他任意类型的指针，其他任意类型的指针也可以复制给void指针，他们之间复制不需要强制类型转换。当然任何地址也可以复制给void型指针。我们在《网络编程》中经常会看到accept(socket, (struct sockaddr *)&amp;saddr_c, &amp;lenth)之类的语句在&amp;saddr_c之前需要增加代码(struct sockaddr <em>)是因为当此函数被设计的时候ANSI C还没有提出void</em>的概念。所有的地址统一用struct sockaddr类型标识，该函数的第二个参数也是指向struct sockaddr类型的指针，此处是强制类型转换。</p>
+<p>当然，在某些编译器中不同类型的指针也可以进行直接赋值，但一般情况下会给出类型不匹配的警告。要求程序员显示的给出指针强制类型转换可以提醒程序员小心使用指针，对于明确程序目的具有一定的好处。</p>
+<ol>
+<li>指针类型强制转换</li>
+</ol>
+<p>int m;</p>
+<p>int *pm = &m;</p>
+<p>char *cp = (char *)&m;</p>
+<p>pm指向一个整型，cp指向整型数的第一个字节</p>
+<ol start="2">
+<li>结构体之间的强制转换</li>
+</ol>
+<p>struct str1 a;</p>
+<p> </p>
+<p>struct str2 b;</p>
+<p>a=(struct str1) b;                  //this is wrong</p>
+<p>a=<em>((struct str1</em>)&amp;b);         //this is correct</p>
+<p> </p>
+<ol start="3">
+<li>关于一个程序的解释</li>
+</ol>
+<p> </p>
+<p>int main(void)</p>
+<p>{</p>
+<pre><code>    int a［4] = &#123;1, 2, 3, 4&#125;;
+
+    int *ptr1=(int *)(&amp;a+1);
+
+    int *ptr2=(int *)((int)a+1);
+
+    int *c = *(a + 1);
+
+    printf(&quot;%x, %x,%x\n&quot;, ptr1[-1], *ptr2,*c);
+
+    return 0;</code></pre>
+<p>}</p>
+<p>输出分别为4 和2000000,2
+ </p>
+<p>式子&amp;a+1表示的是指针加法运算，而不是普通的数值加法运算</p>
+<ol>
+<li>&amp;a+1</li>
+</ol>
+<p>   &amp;a表示数组指针，&amp;a+1表示指向下一个数组，强制转换为int型指针，减一即指向a［3]=4;在前面两篇文章中有详细解释。而ptr1［-1]= <em>(ptr1 - 1) 由于ptr1是指针，指向数组a后面的下一个元素，而ptr1-1就是ptr1这个指针往前移动一个单位，移动之后这个指针指向了数组a的最后一个元素。所以就有</em>(ptr1-1)=4。</p>
+<ol start="2">
+<li>(int *)((int)a+1)</li>
+</ol>
+<p>       指针ptr2的处理是把数组名a强制转换成整型变量，然后再加1，然后再强制转换成整型指针，即是让ptr2指向a[0]的第二个字节，此时打印的内容就是ptr2所指向的往后4个字节的内容，也就是a{0}的后三个字节和a[1]的第一个字节上面的图没有画出里面的内容。此时需要考虑大小端问题。</p>
+<p>    </p>
+<p>    字节序分两种，大端字节序(big-endian) ，小端字节序(little-endian)   </p>
+<p>    1、所谓大端(big-endian)序，就是高优先位对应高有效位。就是读取或者存放数据时，最低位 对应高地址 。</p>
+<p>    2、所谓小端(little-endian)序，就是高优先位对应低有效位 。就是读取或者存放数据时，最低 位对应低地址 。</p>
+<p>       由于x86平台是小端序的，因此将会打印出0200 0000，如果题目中没有说明在x86平台，那答案是不确定的，取决于具体的平台，例如ARM平台就是大端序的。 </p>
+<ol start="3">
+<li>*(a + 1)  </li>
+</ol>
+<p>      *(a + 1)  此时的a已经是一个常指针了，这个表达式计算出a所指向元素后面的第2个元素的地址，然后对它解引用得到相应的值。这个表达式等价于int last = a［1]</p>
+<p>结构体类型的强制类型转换</p>
+<p>结构体和int等类型一样，都是数据类型。其他类型怎么转换，结构体就怎么转换，没有什么特殊的地方。<br>楼主可能想知道的不是结构体怎样强制转换这个问题吧，猜测，楼主想知道如下几个问题：<br>如果将一个结构体强制类型转换为另一个结构体（或者类型），那这个结构体的成员会怎样了？<br>如果将一个结构体强制类型转换为另一个结构体（或者类型），那么这个结构体成员的数值又会是什么了？<br>解答：</p>
+<ol>
+<li>结构体的本质是：我们和C语言约定了一段内存空间的长短，及其内容的安排。假设下面两个结构体：<br>struct A1<br>{<br>     int a;<br>     char b;</li>
+</ol>
+<p>};</p>
+<p>struct A2<br>{<br>        char a;<br>        int b;</p>
+<p>};<br>接着，用struct A1和struct A2定义变量，并赋初值：<br>struct A1 x = {10, ‘A’};<br>struct A2 y = {‘A’, 10};<br>现在最重要的是，要知道x和y的内存情况：<br>x的内存安排是：前4B，后1B；<br>y的内存安排是：前1B，后4B。<br>如果有struct A2 z;<br>z.a = ((struct A2)x).a;<br>那么，C语言会对x的空间，按照struct A2的格局进行解释:</p>
+<pre><code>也就是说，将x的第一个字节看成第一个成员，且按ASCII码处理数据，而将后面的4B看成第二个成员，并按补码格式解释数据。
+
+
+
+
+
+内存对齐小结：
+
+
+在C语言面试和考试中经常会遇到内存字节对齐的问题。今天就来对字节对齐的知识进行小结一下。
+
+首先说说为什么要对齐。为了提高效率，计算机从内存中取数据是按照一个固定长度的。以32位机为例，它每次取32个位，也就是4个字节（每字节8个位，计算机基础知识，别说不知道）。字节对齐有什么好处？以int型数据为例，如果它在内存中存放的位置按4字节对齐，也就是说1个int的数据全部落在计算机一次取数的区间内，那么只需要取一次就可以了。如图a-1. 1. 如果不对齐，很不巧，这个int数据刚好跨越了取数的边界，这样就需要取两次才能把这个int的数据全部取到，这样效率也就降低了。                        </code></pre>
+<p>                                    </p>
+<pre><code>内存对齐是会浪费一些空间的。但是这种空间上得浪费却可以减少取数的时间。这是典型的一种以空间换时间的做法。空间与时间孰优孰略这个每个人都有自己的看法，但是C语言既然采取了这种以空间换时间的策略，就必然有它的道理。况且，在存储器越来越便宜的今天，这一点点的空间上的浪费就不算什么了。
+
+需要说明的是，字节对齐不同的编译器可能会采用不同的优化策略，以下以GCC为例讲解结构体的对齐.
+
+一、原则：
+
+1. 结构体内成员按自身按自身长度自对齐。
+
+自身长度，如char=1，short=2，int=4，double=8,。所谓自对齐，指的是该成员的起始位置的内存地址必须是它自身长度的整数倍。如int只能以0,4,8这类的地址开始
+
+
+2. 结构体的总大小为结构体的有效对齐值的整数倍
+
+结构体的有效对齐值的确定：
+
+1）当未明确指定时，以结构体中最长的成员的长度为其有效值
+
+2）当用#pragma pack(n)指定时，以n和结构体中最长的成员的长度中较小者为其值。
+
+3）当用__attribute__ ((__packed__))指定长度时，强制按照此值为结构体的有效对齐值
+
+二、例子
+
+1. 
+
+struct AA&#123;
+
+        char a;
+
+        int b;
+
+        char c; 
+
+
+&#125;aa
+
+结果，sizeof（aa）=12
+
+何解？首先假设结构体内存起始地址为0，那么地址的分布如下
+
+0  a
+
+1  
+
+2
+
+3
+
+4  b
+
+5  b
+
+6  b
+
+7  b
+
+8  c
+
+9
+
+10
+
+11
+
+char的字对齐长度为1，所以可以在任何地址开始，但是，int自对齐长度为4，必须以4的倍数地址开始。所以，尽管1-3空着，但b也只能从4开始。再加上c后，整个结构体的总长度为9，结构体的有效对齐值为其中最大的成员即int的长度4，所以，结构体的大小向上扩展到12，即9-11的地址空着。
+
+
+2. 
+
+
+struct AA&#123;
+
+        char a;
+
+    char c; 
+
+        int b;    
+
+
+&#125;aa
+
+sizeof（aa）=8，为什么呢
+
+
+0  a
+
+1  c
+
+2
+
+3
+
+4  b
+
+5  b
+
+6  b
+
+7  b
+
+因为c为char类型，字对齐长度为1，所以可以有效的利用1-3间的空格。看见了吧，变量定义的位置的不同时有可能影响结构体的大小的哦！
+
+
+
+3. 
+
+#pragma pack(2)
+
+
+struct AA&#123;
+
+        char a;
+
+        int b;
+
+        char c; 
+
+
+&#125;aa
+
+sizeof（aa）=10,
+为什么呢？a到c只占9字节长度，因为结构体的有效对齐长度在pack指定的2和int的4中取
+
+较小的值2。故取2的倍数10。
+
+如果当pack指定为8呢?那就仍然按4来对齐，结果仍然是12。
+
+
+
+
+ 4. </code></pre>
+<p>struct AA{</p>
+<pre><code>    char a;
+
+    int b;
+
+    char c; </code></pre>
+<p>}<strong>attribute</strong>((<strong>8</strong>))aa</p>
+<p>sizeof(aa)=16,）</p>
+<p>为咩？其实a到c仍然只占9字节长度，但结构体以8对齐，故取8的倍数16.</p>
+<p>如果其指定2，则结果为10</p>
+<p>如果pragma pack和<strong>attribute</strong> 同时指定呢？以<strong>attribute</strong> 的为准。</p>
+<p>需要说明的是，不管pragma pack和__attribute__如何指定，结构体内部成员的自对齐仍然按照其自身的对齐值。</p>
+<p> 另外，不同的编译器可能会对内存的分布进行优化，</p>
+<p> 例如有些编译器会把立体1中的程序优化成例题2的样子。但这属于编译器的问题，</p>
+<p> 这里不做详细讨论。如果要作为编程的参考的话，最好当做编译器不会做优化，</p>
+<p> 尽量在保持代码清晰的情况下，自己手动将例题1优化成例题2的样子。</p>
+<p> 如果是做题的话，按照以上原则做就可以了，不用考虑不同编译器的特性。</p>
+<p>(参考老K的代码world)[<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33366098/article/details/78137422]">https://blog.csdn.net/qq_33366098/article/details/78137422]</a></p>
+<hr>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">lys-studys</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/posts/6688/">http://example.com/posts/6688/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/c-c/">c/c++</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/37274/"><img class="next-cover" data-lazy-src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">均匀的生成随机数</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By lys-studys</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">我们相遇不是意外~ <a target="_blank" rel="noopener" href="https://lys-studys.github.io//">blog</a>!</div><div class="icp"><a target="_blank" rel="noopener" href="http://www.beian.miit.gov.cn/state/outPortal/loginPortal.action"><img class="icp-icon" src="/img/icp.png"/><span>粵ICP備xxxx</span></a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="chat_btn" type="button" title="rightside.chat_btn"><i class="fas fa-sms"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>var endLoading = function () {
+  document.body.style.overflow = 'auto';
+  document.getElementById('loading-box').classList.add("loaded")
+}
+window.addEventListener('load',endLoading)</script><div class="js-pjax"><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    $.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js', function () {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'default',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    window.valine = new Valine({
+      el: '#vcomment',
+      appId: 'K6YAjTUpfqvIIJRgat2mpicY-gzGzoHsz',
+      appKey: 'TiK1kxcHhW26MWKdEgTtxWlm',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    });
+    if ('nick,mail') { valine.config.requiredFields= 'nick,mail'.split(',') }
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else $.getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js', initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.querySelector('#vcomment'),loadValine)
+  else setTimeout(() => loadValine(), 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><canvas class="fireworks"></canvas><script src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script src="/js/third-party/fireworks.js"></script><script defer="defer" id="ribbon" src="/js/third-party/canvas-ribbon.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="ribbon_piao" mobile="true" src="/js/third-party/piao.js"></script><script src="/js/third-party/activate-power-mode.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="/js/third-party/click_heart.js" async="async"></script><script src="/js/third-party/ClickShowText.js" async="async"></script><script>(function(d, w, c) {
+    w.ChatraID = '';
+    var s = d.createElement('script');
+    w[c] = w[c] || function() {
+        (w[c].q = w[c].q || []).push(arguments);
+    };
+    s.async = true;
+    s.src = 'https://call.chatra.io/chatra.js';
+    if (d.head) d.head.appendChild(s);
+})(document, window, 'Chatra');
+
+if (true) {
+  var chatBtnFn = () => {
+    var chatBtn = document.getElementById("chat_btn")
+    chatBtn.addEventListener("click", function(){
+      Chatra('openChat')
+    });
+  }
+  chatBtnFn()
+} else {
+  if (true) {
+    function chatBtnHide () {
+      Chatra('hide')
+    }
+    function chatBtnShow () {
+      Chatra('show')
+    }
+  }
+}</script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
